@@ -5,15 +5,15 @@ class Itens:
         self.nome_personagem = nome_personagem
         if nome_personagem not in Itens._itens:
             Itens._itens[nome_personagem] = {
-                'potion': 0,
-                'hipotion': 0,
-                'mana_potion': 0,
-                'espada_inicial': 1,
-                'cetro_inicial': 1,
-                'escudo_basico': 0,
-                'espada_longa': 0,
-                'cetro_magico': 0,
-                'espada_vampirica': 0
+                'potion': {'nome': 'Potion', 'quantidade': 0, 'cura': 30},
+                'hipotion': {'nome': 'Hi Potion', 'quantidade': 0, 'cura': 80},
+                'mana_potion': {'nome': 'Mana Potion', 'quantidade': 0, 'cura': 50},
+                'espada_inicial': {'nome': 'Espada Inicial', 'quantidade': 1, 'dano_min': 8, 'dano_max': 12, 'hand': 1, 'bonus': {'str': 5}},
+                'cetro_inicial': {'nome': 'Cetro Inicial', 'quantidade': 1, 'dano_min': 5, 'dano_max': 8, 'hand': 2, 'bonus': {'int': 20}},
+                'escudo_basico': {'nome': 'Escudo Básico', 'quantidade': 0, 'dano_min': 0, 'dano_max': 0, 'hand': 1,'bonus': {'def': 5}},
+                'espada_longa': {'nome': 'Espada Longa', 'quantidade': 0, 'dano_min': 25, 'dano_max': 45, 'hand': 2, 'bonus': {'str': 15}},
+                'cetro_magico': {'nome': 'Cetro Mágico', 'quantidade': 0, 'dano_min': 10, 'dano_max': 15, 'hand': 2, 'bonus': {'int': 50}, 'especial': {'cura': 50}},
+                'espada_vampirica': {'nome': 'Espada Vampírica', 'quantidade': 0, 'dano_min': 5, 'dano_max': 25, 'hand': 1, 'bonus': {'str': 8}, 'especial': {'cura': 100}},
             }
 
     @classmethod
@@ -30,24 +30,44 @@ class Itens:
     @classmethod
     def verificar_armamentos(cls, nome_personagem):
         if nome_personagem in cls._itens:
-            equipamentos = []
+            armamentos = []
             equip_char = cls._itens[nome_personagem]
 
-            if equip_char.get('espada_inicial', 0) > 0: 
-                equipamentos.append(f"Espada inicial {cls._itens[nome_personagem]['espada_inicial']} - Dano 8 - 12 (1 mão)")                
-            if equip_char.get('cetro_inicial', 0) > 0: 
-                equipamentos.append(f"Cetro inicial {cls._itens[nome_personagem]['cetro_inicial']} - dano 5-8. Int + 20 (2 mãos)")
-            if equip_char.get('escudo_basico', 0) > 0: 
-                equipamentos.append(f"Escudo basico {cls._itens[nome_personagem]['escudo_basico']} - +5 Defesa")
-            if equip_char.get('espada_longa', 0) > 0: 
-                equipamentos.append(f"Espada longa {cls._itens[nome_personagem]['espada_longa']} - Dano 25 - 40 (2 mãos)")
-            if equip_char.get('cetro_magico', 0) > 0: 
-                equipamentos.append(f"Cetro mágico {cls._itens[nome_personagem]['cetro_magico']} - Dano 10. Int + 50. Restaura 30 mana quando mata um inimigo (2 mãos)")
-            if equip_char.get('espada_vampirica', 0) > 0: 
-                equipamentos.append(f"Espada vampírica {cls._itens[nome_personagem]['espada_vampirica']} - Dano 5-25. Cura 100% do dano feito (1 mão)")
+            cls._itens[nome_personagem]['espada_inicial']['dano_min']            
+            cls._itens[nome_personagem]['espada_inicial']['dano_max']
 
-            if equipamentos:                
-                return "\n".join(equipamentos)
+            if equip_char['espada_inicial'].get('quantidade', 0) > 0: 
+                espada_ini = cls._itens[nome_personagem]['espada_inicial']
+                armamentos.append(f"{espada_ini['nome']}: qtd: {espada_ini['quantidade']} - Dano {espada_ini['dano_min']} - {espada_ini['dano_max']}"
+                                 + f" - Bônus: Str + {espada_ini['bonus']['str']} - ({espada_ini['hand']} mão)")
+ 
+            if equip_char['cetro_inicial'].get('quantidade', 0) > 0: 
+                cetro_ini = cls._itens[nome_personagem]['cetro_inicial']
+                armamentos.append(f"{cetro_ini['nome']}: qtd: {cetro_ini['quantidade']} - Dano {cetro_ini['dano_min']} - {cetro_ini['dano_max']}"
+                                 + f" - Bônus: Int + {cetro_ini['bonus']['int']} - ({cetro_ini['hand']} mão)")
+
+            if equip_char['escudo_basico'].get('quantidade', 0) > 0: 
+                escudo_basico = cls._itens[nome_personagem]['escudo_basico']
+                armamentos.append(f"{escudo_basico['nome']}: qtd: {escudo_basico['quantidade']} - Dano {escudo_basico['dano_min']} - {escudo_basico['dano_max']}"
+                                 + f" - Bônus: Def + {escudo_basico['bonus']['def']} - ({escudo_basico['hand']} mão)")
+
+            if equip_char['espada_longa'].get('quantidade', 0) > 0: 
+                espada_longa = cls._itens[nome_personagem]['espada_longa']
+                armamentos.append(f"{espada_longa['nome']}: qtd: {espada_longa['quantidade']} - Dano {espada_longa['dano_min']} - {espada_longa['dano_max']}"
+                                 + f" - Bônus: Str + {espada_longa['bonus']['str']} - ({espada_longa['hand']} mão)")
+
+            if equip_char['cetro_magico'].get('quantidade', 0) > 0: 
+                cetro_magico = cls._itens[nome_personagem]['cetro_magico']
+                armamentos.append(f"{cetro_magico['nome']}: qtd: {cetro_magico['quantidade']} - Dano {cetro_magico['dano_min']} - {cetro_magico['dano_max']}"
+                                 + f" - Bônus: Int + {cetro_magico['bonus']['int']} - Restaura {cetro_magico['especial']['cura']} de mana quando mata um inimigo - ({cetro_magico['hand']} mão)")
+
+            if equip_char['espada_vampirica'].get('quantidade', 0) > 0: 
+                espada_vamp = cls._itens[nome_personagem]['espada_vampirica']
+                armamentos.append(f"{espada_vamp['nome']}: qtd: {espada_vamp['quantidade']} - Dano {espada_vamp['dano_min']} - {espada_vamp['dano_max']}"
+                                 + f" - Bônus: Str + {espada_vamp['bonus']['str']} - Restaura {espada_vamp['especial']['cura']}% do dano realizado - ({espada_vamp['hand']} mão)")
+
+            if armamentos:                
+                return "\n".join(armamentos)
             else:
                 return "Nenhum equipamento no inventário"
         else:
