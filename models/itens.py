@@ -113,7 +113,7 @@ class Itens:
         if nome_personagem in cls._itens:
             if cod in cls._itens[nome_personagem]:
                 cls._itens[nome_personagem][cod]['quantidade'] += quantidade
-                print(f"{quantidade} {cls._itens[nome_personagem][cod]['nome']}(s) adicionados para '{nome_personagem}'.")
+                print(f"{quantidade} {cls._itens[nome_personagem][cod]['nome']}(s) adicionados!")
                 return True
             else:
                 print("Item inválido")
@@ -127,7 +127,7 @@ class Itens:
         if nome_personagem in cls._itens:
             if cod in cls._itens[nome_personagem]:
                 cls._itens[nome_personagem][cod]['quantidade'] -= quantidade
-                print(f"{quantidade} {cls._itens[nome_personagem][cod]['nome']}(s) removidos de '{nome_personagem}'.")
+                print(f"{quantidade} {cls._itens[nome_personagem][cod]['nome']} removidos do inventário!")
                 return True
             else:
                 print("Item inválido")
