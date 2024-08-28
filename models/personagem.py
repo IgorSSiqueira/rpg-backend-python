@@ -1,5 +1,5 @@
 from models.itens import Itens
-from models.magias import Magias
+# from models.magias import Magias
 from models.equipamentos import Equipamentos
 
 class Personagem:
@@ -9,7 +9,7 @@ class Personagem:
         self._nome = nome 
         self._player = player
         self._inventario = Itens(nome)        
-
+        
         if player:
             self._level = 1
             self.HPmax = 100
@@ -21,8 +21,8 @@ class Personagem:
             self._vitalidade = 1
             self._forca = 1
             self._inteligencia = 1
-            self._magias = Magias()
-            self._equipoamentos = Equipamentos(nome)
+            # self._magias = Magias()
+            self._equipamentos = Equipamentos(nome)
         else:
             self._level = level
             self.HPmax = 40 * level
