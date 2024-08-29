@@ -18,10 +18,12 @@ class Personagem:
             self.MP = 80
             self.XP = 0
             self.XPup = 30
+
             # Vou fazer uma classe com os atributos
             # self._vitalidade = 1
             # self._forca = 1
             # self._inteligencia = 1
+            
             # self._magias = Magias()
             self._equipamentos = Equipamentos(nome)
         else:

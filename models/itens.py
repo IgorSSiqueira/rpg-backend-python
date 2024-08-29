@@ -9,7 +9,7 @@ class Itens:
                 1: {'cod': 1, 'nome': 'Potion', 'quantidade': 1, 'cura': 30},
                 2: {'cod': 2, 'nome': 'Hi Potion', 'quantidade': 1, 'cura': 80},
                 3: {'cod': 3, 'nome': 'Mana Potion', 'quantidade': 1, 'cura': 50},
-                4: {'cod': 4,'nome': 'Espada Inicial', 'quantidade': 1, 'dano_min': 8, 'dano_max': 12, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 5},
+                4: {'cod': 4, 'nome': 'Espada Inicial', 'quantidade': 1, 'dano_min': 8, 'dano_max': 12, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 5},
                 5: {'cod': 5, 'nome': 'Cetro Inicial', 'quantidade': 1, 'dano_min': 5, 'dano_max': 8, 'maos': 2, 'tipo_bonus': 'int', 'bonus': 20},
                 6: {'cod': 6, 'nome': 'Escudo Básico', 'quantidade': 1, 'dano_min': 0, 'dano_max': 0, 'maos': 1,'tipo_bonus': 'def', 'bonus': 5},
                 7: {'cod': 7, 'nome': 'Espada Longa', 'quantidade': 1, 'dano_min': 25, 'dano_max': 45, 'maos': 2, 'tipo_bonus': 'str', 'bonus': 15},
@@ -33,7 +33,7 @@ class Itens:
             return f"Personagem '{nome_personagem}' não encontrado"
     
     @classmethod
-    def verificar_armamentos(cls, nome_personagem, is_equipar = False):
+    def verificar_armamentos_no_inventario(cls, nome_personagem, is_equipar = False):
         if nome_personagem in cls._itens:
             armamentos = []
             equip_char = cls._itens[nome_personagem]
