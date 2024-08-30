@@ -1,8 +1,7 @@
 from models.itens import Itens
 
-
-ESCUDO = 'escudo'
 ARMA = 'arma'
+ESCUDO = 'escudo'
 
 class Equipamentos:
     _equipados = {}
@@ -12,8 +11,8 @@ class Equipamentos:
 
         if nome_personagem not in Equipamentos._equipados:
             Equipamentos._equipados[nome_personagem] = {
-                'arma': {},
-                'escudo': {},            
+                ARMA: {},
+                ESCUDO: {},            
             }
     
     def equipar_item(nome_personagem, cod, espaco):
@@ -46,12 +45,16 @@ class Equipamentos:
 
     @classmethod
     def equipar(cls, nome_personagem):
-        print('Selecione o equipamento que deseja equipar:')
         
-        print(Itens.verificar_armamentos(nome_personagem, True) + '\n')
+        item_inventario = Itens.verificar_armamentos_no_inventario(nome_personagem, True)
+        
+        if item_inventario == 0:
+            return '\nNão possui itens no inventário!\n\n'
+
+        print('Selecione o equipamento que deseja equipar:')
+        print(item_inventario + '\n')
         equip = cls.while_escolha('Digite o número do equipamento escolhido: ', nome_personagem)
         
-        #VERIFICANDO SE É ESCUDO OU ARMA
         if Itens._itens[nome_personagem][equip]['tipo_bonus'] == 'def':
             if cls._equipados[nome_personagem][ESCUDO]:
                 print('\nJá possui um escudo equipado. Deseja desequipar e equipar o escudo selecionado?')
@@ -132,3 +135,7 @@ class Equipamentos:
                 itens_equipados.append(f"{escudo['nome']} - Defesa {escudo['bonus']}")
             
             return "\n".join(itens_equipados)
+    
+    @classmethod
+    def retornar_arma_escudo(cls, nome_personagem, equipamento):
+        return cls._equipados[nome_personagem][equipamento]['cod']

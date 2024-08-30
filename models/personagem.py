@@ -1,5 +1,6 @@
+from models.atributos import Atributos
 from models.itens import Itens
-# from models.magias import Magias
+from models.magias import Magias
 from models.equipamentos import Equipamentos
 
 class Personagem:
@@ -8,7 +9,8 @@ class Personagem:
     def __init__(self, nome, player:bool, level = 1):
         self._nome = nome 
         self._player = player
-        self._inventario = Itens(nome)        
+        self._inventario = Itens(nome)  
+        self._atributos = Atributos(nome)      
         
         if player:
             self._level = 1
@@ -18,13 +20,7 @@ class Personagem:
             self.MP = 80
             self.XP = 0
             self.XPup = 30
-
-            # Vou fazer uma classe com os atributos
-            # self._vitalidade = 1
-            # self._forca = 1
-            # self._inteligencia = 1
-            
-            # self._magias = Magias()
+            self._magias = Magias()
             self._equipamentos = Equipamentos(nome)
         else:
             self._level = level
@@ -36,3 +32,18 @@ class Personagem:
 
     def __str__(self):
         return f'{self._nome}'
+
+    def atacar(self, nome_personagem):
+        cod = self._equipamentos.retornar_arma_escudo(nome_personagem, 'arma')
+        min = Itens._itens[nome_personagem][cod]['dano_min']
+        max = Itens._itens[nome_personagem][cod]['dano_max']
+
+        # min calculos -> forca
+        # max calculos -> forca
+
+        # dano_causado >= min e <= max
+
+        return f'{min} - {max}'
+
+    def usar_magia(self, nome_personagem, self_enemy: bool):
+        pass
