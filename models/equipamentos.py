@@ -1,7 +1,5 @@
 from models.itens import Itens
-
-ARMA = 'arma'
-ESCUDO = 'escudo'
+from models.constantes import ARMA, ESCUDO
 
 class Equipamentos:
     _equipados = {}
@@ -42,6 +40,9 @@ class Equipamentos:
         
         return opcao_selecionada
 
+    @classmethod
+    def equipar_primeiro_item(cls, nome_personagem, cod_item):
+        cls.equipar_item(nome_personagem, cod_item, ARMA)
 
     @classmethod
     def equipar(cls, nome_personagem):
@@ -49,7 +50,8 @@ class Equipamentos:
         item_inventario = Itens.verificar_armamentos_no_inventario(nome_personagem, True)
         
         if item_inventario == 0:
-            return '\nNão possui itens no inventário!\n\n'
+            print('\nNão possui itens no inventário!\n\n')
+            return False
 
         print('Selecione o equipamento que deseja equipar:')
         print(item_inventario + '\n')
@@ -63,9 +65,11 @@ class Equipamentos:
                 if opcao == 1:
                     cls.desequipar_item(nome_personagem, ESCUDO)
                     cls.equipar_item(nome_personagem, equip, ESCUDO)
-                    return '\nEscudo alterado!\n\n'
+                    print('\nEscudo alterado!\n\n')
+                    return True
                 else:
-                    return '\nNão foi feito nenhuma alteração nos equipamentos.\n\n'
+                    print('\nNão foi feito nenhuma alteração nos equipamentos.\n\n')
+                    return False
                 
             elif cls._equipados[nome_personagem][ARMA]['maos'] == 2:
                 print('Sua arma equipada é de 2 mãos, deseja desequipar ela para equipar o escudo?')
@@ -74,13 +78,15 @@ class Equipamentos:
                 if opcao == 1:
                     cls.desequipar_item(nome_personagem, ARMA)
                     cls.equipar_item(nome_personagem, equip, ESCUDO)
-                    return '\nArma de 2 mãos desequipada para equipar o escudo!\n\n'
+                    print('\nArma de 2 mãos desequipada para equipar o escudo!\n\n')
+                    return True
                 else:
-                    return '\nNão foi feito nenhuma alteração nos equipamentos.\n\n'
-
+                    print('\nNão foi feito nenhuma alteração nos equipamentos.\n\n')
+                    return False
             else:
                 cls.equipar_item(nome_personagem, equip, ESCUDO)
-                return '\nEscudo equipado\n\n'
+                print('\nEscudo equipado\n\n')
+                return True
         else:
             if cls._equipados[nome_personagem][ARMA]:
                 if Itens._itens[nome_personagem][equip]['maos'] == 2 and cls._equipados[nome_personagem][ESCUDO]:
@@ -91,9 +97,11 @@ class Equipamentos:
                         cls.desequipar_item(nome_personagem, ARMA)
                         cls.desequipar_item(nome_personagem, ESCUDO)
                         cls.equipar_item(nome_personagem, equip, ARMA)
-                        return '\nArma e escudo desequipados para equipar a arma de 2 mãos\n\n'
+                        print('\nArma e escudo desequipados para equipar a arma de 2 mãos\n\n')
+                        return True
                     else:
-                        return '\nNão foi feito nenhuma alteração nos equipamentos.\n\n'
+                        print('\nNão foi feito nenhuma alteração nos equipamentos.\n\n')
+                        return False
                     
                 else:
                     print('já possui uma arma equipada, deseja alterar para a arma selecionada?\n')
@@ -102,9 +110,11 @@ class Equipamentos:
                     if opcao == 1:
                         cls.desequipar_item(nome_personagem, ARMA)
                         cls.equipar_item(nome_personagem, equip, ARMA) 
-                        return '\nArma desequipada para equipar o novo equipamento\n\n'  
+                        print('\nArma desequipada para equipar o novo equipamento\n\n')
+                        return True
                     else:
-                        return '\nNão foiu feito nenhuma alteração nois equipamentos.\n\n'         
+                        print('\nNão foiu feito nenhuma alteração nois equipamentos.\n\n')
+                        return False        
 
             elif Itens._itens[nome_personagem][equip]['maos'] == 2 and cls._equipados[nome_personagem][ESCUDO]:
                 print('arma equipada é de 2 mãos e possui um escudo equipado. Deseja desequipar o escudo para equipar a arma de duas mãos?\n')
@@ -113,13 +123,16 @@ class Equipamentos:
                 if opcao == 1:
                     cls.desequipar_item(nome_personagem, ESCUDO)
                     cls.equipar_item(nome_personagem, equip, ARMA)
-                    return '\nArma desequipada para equipar a nova arma\n\n'
+                    print('\nArma desequipada para equipar a nova arma\n\n')
+                    return True
                 else:
-                    return '\nNão foi feito nenhuma alteração nos equipamentos.\n\n'
+                    print('\nNão foi feito nenhuma alteração nos equipamentos.\n\n')
+                    return False
                 
             else:
                 cls.equipar_item(nome_personagem, equip, ARMA)
-                return '\nArma equipada!\n\n'
+                print('\nArma equipada!\n\n')
+                return True
 
     @classmethod
     def verificar_equipamentos(cls, nome_personagem):
@@ -138,4 +151,4 @@ class Equipamentos:
     
     @classmethod
     def retornar_arma_escudo(cls, nome_personagem, equipamento):
-        return cls._equipados[nome_personagem][equipamento]['cod']
+        return cls._equipados[nome_personagem][equipamento]['cod'] 

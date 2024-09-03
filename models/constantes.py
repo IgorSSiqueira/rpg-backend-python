@@ -1,0 +1,6 @@
+VITALIDADE = 'vitalidade'
+FORCA = 'forca'
+INTELIGENCIA = 'inteligencia'
+DEFESA = 'defesa'
+ARMA = 'arma'
+ESCUDO = 'escudo'
