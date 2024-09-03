@@ -151,4 +151,7 @@ class Equipamentos:
     
     @classmethod
     def retornar_arma_escudo(cls, nome_personagem, equipamento):
-        return cls._equipados[nome_personagem][equipamento]['cod'] 
+        if cls._equipados[nome_personagem][equipamento]:
+            return cls._equipados[nome_personagem][equipamento]['cod'] 
+        else:
+            return 0

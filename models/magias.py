@@ -9,7 +9,7 @@ class Magias:
     def custo_mana(self, magia):
         return self._magias[magia]['mana']
 
-    def fire(self, magia, int):
+    def magia_ataque(self, magia, int):
         return self._magias[magia]['dano_base'] + (round((int*5)/1.2))
     
     def cure(self, hp_max, int):

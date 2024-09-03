@@ -3,7 +3,7 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE#, ESCUDO
+from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA
 import os
 
 class Personagem:
@@ -18,9 +18,9 @@ class Personagem:
         if player:
             self._level = 1
             self.HPmax = 100
-            self.HP = 100
+            self.HP = self.HPmax
             self.MPmax = 80
-            self.MP = 80
+            self.MP = self.MPmax
             self.XP = 0
             self.XPup = 30
             self._magias = Magias()
@@ -28,8 +28,11 @@ class Personagem:
         else:
             self._level = level
             self.HPmax = 40 * level
-            self.HP = 40 * level
+            self.HP = self.HPmax
             self.XP = 10 + (10 * round(level/1.3))
+            # self.dano = etc
+
+        print(f'HP {nome} = {self.HP}')
 
         Personagem.personagens.append(self)
 
@@ -89,66 +92,118 @@ class Personagem:
     def usar_magia(self, nome_personagem, self_enemy: bool):
         pass
 
-    def atacar(self, atacante, defensor):
-        cod_arma = self._equipamentos.retornar_arma_escudo(atacante, ARMA)
-        min = Itens._itens[atacante][cod_arma]['dano_min']
-        max = Itens._itens[atacante][cod_arma]['dano_max']
+    def acao_turno(self, player, inimigo, acao, cod_item = 0, cod_magia = ''):  
+        dano_causado_player = 0      
+        defesa_inimigo = self._atributos.retornar_atributo(inimigo, DEFESA)
 
-        str = self._atributos.retornar_atributo(atacante, FORCA)
-        dano_causado = random.randint(min, max) + (str * 3)
+        if acao == ATACAR:
+            cod_arma_player = self._equipamentos.retornar_arma_escudo(player, ARMA)
+            dano_min_player = Itens._itens[player][cod_arma_player]['dano_min']
+            dano_max_player = Itens._itens[player][cod_arma_player]['dano_max']
 
-        defesa = self._atributos.retornar_atributo(defensor, DEFESA)        
-        cod_escudo = self._equipamentos.retornar_arma_escudo(defensor, DEFESA)        
-        if cod_escudo:
-            defesa += Itens._itens[defensor][cod_escudo]['bonus']
+            str_player = self._atributos.retornar_atributo(player, FORCA)
+            dano_causado_player = random.randint(dano_min_player, dano_max_player) + (str_player * 3)
+            
+            dano_causado_player -= defesa_inimigo
+        
+        elif acao == USAR_MAGIA:
+            if cod_magia not in ['cure', 'restore']:
+                dano_causado_player = self._magias.magia_ataque(cod_magia, self._atributos.retornar_atributo(player, INTELIGENCIA))
+                dano_causado_player -= defesa_inimigo      
+        
 
-        # PRECISAMOS PENSAR EM UM JEITO BACANA DE RECEBER MENOS DANO
-        # NÃO SEI SE DIMINUIR A DEFESA DIRETAMENTE FICARÁ LEGAL
-        dano_causado -= defesa
+        cod_arma_inimigo = self._equipamentos.retornar_arma_escudo(player, ARMA)
+        dano_min_inimigo = Itens._itens[player][cod_arma_inimigo]['dano_min']
+        dano_max_inimigo = Itens._itens[player][cod_arma_inimigo]['dano_max']
 
-        return dano_causado 
+        str_inimigo = self._atributos.retornar_atributo(player, FORCA)
+        dano_causado_inimigo = random.randint(dano_min_inimigo, dano_max_inimigo) + (str_inimigo * 3)
+
+        defesa_player = self._atributos.retornar_atributo(player, DEFESA)
+        dano_causado_inimigo -= defesa_player        
+        
+        for player in Personagem.personagens:
+            if player.nome == player:
+                hp_player = player.HP
+                xp_level_up = player.XPup
+                xp_atual_player = player.XP
+
+                if acao == USAR_ITEM:
+                    player._inventario.usar_pocao(player.nome, cod_item)
+                    
+                    if cod_item == 1 or cod_item == 2:
+                        player.HP += Itens._itens[player][cod_item]['cura']
+                        if player.HP > player.HPmax:
+                            player.HP = player.HPmax
+                    else:
+                        player.MP += Itens._itens[player][cod_item]['cura']
+                        if player.MP > player.MPmax:
+                            player.MP = player.MPmax
+                
+                elif acao == USAR_MAGIA and cod_magia in ['cure', 'restore']:
+                    if cod_magia == 'cure':
+                        player.HP += player._magias.cure(player.HPmax, self._atributos.retornar_atributo(player, INTELIGENCIA))
+                        if player.HP > player.HPmax:
+                            player.HP = player.HPmax
+                    else:
+                        player.HP = player._magias.restore(player.HPmax)
+
+                for inimigo in Personagem.personagens:
+                    if inimigo.nome == inimigo:
+                        hp_inimigo = inimigo.HP
+                        xp_inimigo = inimigo.XP    
+
+                hp_inimigo -= dano_causado_player
+                if hp_inimigo <= 0:
+                    #inimigo morreu
+                    xp_atual_player = xp_inimigo
+
+                    if xp_atual_player >= xp_level_up:
+                        #passou de level
+                        pass
+                    
+                else:
+                    #inimigo ataca
+                    hp_player -= dano_causado_inimigo
+                    pass
+
+        
+        return 0 
 
     def equipar(self, nome_personagem):
         if self._equipamentos.equipar(nome_personagem):
             self.update_dados(nome_personagem)
 
-
-    #
-    # Precisamos fazer um update nos dados do personagem 
-    # sempre que forem adicionados novos atributos ou lvl up
-    #
     def update_dados(self, nome_personagem):
         str = 0
         int = 0
+        def_escudo = 0
         cod_arma = self._equipamentos.retornar_arma_escudo(nome_personagem, ARMA)
-
-        print(f'arma: {cod_arma}')
 
         tipo_str_int = Itens._itens[nome_personagem][cod_arma]['tipo_bonus']
         bonus_str_int = Itens._itens[nome_personagem][cod_arma]['bonus']
 
-        print(f'Tipo e bonus: {tipo_str_int} {bonus_str_int}')
-
-        # cod_escudo = self._equipamentos.retornar_arma_escudo(nome_personagem, ESCUDO)
-        # def_escudo = Itens._itens[nome_personagem][cod_escudo]['bonus']        
+        cod_escudo = self._equipamentos.retornar_arma_escudo(nome_personagem, ESCUDO)
+        if cod_escudo != 0:
+            def_escudo = Itens._itens[nome_personagem][cod_escudo]['bonus']        
         
         if tipo_str_int == 'str':
             str = bonus_str_int
         else:
-            print('entrou no else do atributo INT')
             int = bonus_str_int
         
-        print(f'STR : {str} INT: {int}')
-
         vit = self._atributos.retornar_atributo(nome_personagem, VITALIDADE)
 
         for personagem in self.personagens:
             if personagem.nome == nome_personagem:
-                print('entrou no for')
                 self.HPmax = 100 + (self._level * 25) + (str * 2) + (vit * 10)
                 self.MPmax = 80 + (self._level * 15) + (int * 10)
                 self._atributos.adicionar_remover_ponto_atributo(nome_personagem, INTELIGENCIA, True, int)
                 self._atributos.adicionar_remover_ponto_atributo(nome_personagem, FORCA, True, str)
+                self._atributos.adicionar_remover_ponto_atributo(nome_personagem, DEFESA, True, def_escudo)
+
+    def final_batalha(self, nome_personagem, nome_inimigo):
+        pass
 
     def passou_level(self, nome_personagem):
         for personagem in Personagem.personagens:

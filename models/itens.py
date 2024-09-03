@@ -136,7 +136,7 @@ class Itens:
 
     @classmethod
     def usar_pocao(cls, nome_personagem, tipo_item):
-        if tipo_item not in ['potion', 'hipotion', 'mana_potion']:
+        if tipo_item not in [1, 2, 3]:
             print(f"Tipo de item '{tipo_item}' inválido")
             return False
 

@@ -10,9 +10,13 @@ def main():
 
     Player = Personagem('Jogador', True)
 
-    Player.iniciar_rpg(Player.nome)
+    Inimigo = Personagem('Goblin', False)
 
-    Player._atributos.listar_atributos(Player._nome)
+    Player.atacar(Player.nome, Inimigo.nome)
+
+    #Player.iniciar_rpg(Player.nome)
+    
+    #Player._atributos.listar_atributos(Player._nome)
 
     
     # print('\n' + Player._inventario.verificar_armamentos_no_inventario(Player._nome) + '\n')    
