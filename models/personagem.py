@@ -3,17 +3,16 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA
+from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP
 import os
+import msvcrt
 
 class Personagem:
     personagens = []
 
-    def __init__(self, nome, player:bool, level = 1):
+    def __init__(self, nome, player:bool, level = 1, cod_arma_inimigo = 4):
         self._nome = nome 
-        self._player = player
-        self._inventario = Itens(nome)  
-        self._atributos = Atributos(nome)      
+        self._player = player   
         
         if player:
             self._level = 1
@@ -25,14 +24,16 @@ class Personagem:
             self.XPup = 30
             self._magias = Magias()
             self._equipamentos = Equipamentos(nome)
+            self._inventario = Itens(nome)  
+            self._atributos = Atributos(nome)   
         else:
             self._level = level
             self.HPmax = 40 * level
             self.HP = self.HPmax
-            self.XP = 10 + (10 * round(level/1.3))
-            # self.dano = etc
-
-        print(f'HP {nome} = {self.HP}')
+            self.XP = 10 + (10 * round(level * 1.2))
+            self.dano_base = random.randint(level, (level * 7))
+            self.defesa_base = random.randint(level, (level * 4))
+            self.cod_arma = cod_arma_inimigo
 
         Personagem.personagens.append(self)
 
@@ -40,12 +41,11 @@ class Personagem:
     def nome(self):
         return self._nome
     
-    def iniciar_rpg(self, nome_personagem):
-        qtd_atributo_inicial = 3
-        while qtd_atributo_inicial > 0:
+    def while_incluir_atributos(self, nome_personagem, qtd_pontos):
+        while qtd_pontos > 0:
             os.system('cls')
             try:
-                print(f'Você possui {qtd_atributo_inicial} de pontos de atributo para distribuir\n')  
+                print(f'Você possui {qtd_pontos} de pontos de atributo para distribuir\n')  
                 self._atributos.selecao_atributo()
                 opc = int(input('Informe qual atributo deseja incluir 1 ponto: '))
                 if opc > 0 and opc < 5:
@@ -58,13 +58,18 @@ class Personagem:
                     else:
                         self._atributos.adicionar_remover_ponto_atributo(nome_personagem, DEFESA, True)
 
-                    qtd_atributo_inicial -= 1                    
+                    qtd_pontos -= 1                    
                 else:
                     print('Opção não existente')
             except ValueError:
                 print('Entrada inválida! Por favor, digite um número')
             except KeyError:
                     print('Item não encontrado para a opção escolhida')
+
+    def iniciar_rpg(self, nome_personagem):       
+        print(f'Olá {nome_personagem}, seja bem vindo!! (clique em qualquer tecla para continuar)') 
+        msvcrt.getch()
+        self.while_incluir_atributos(nome_personagem, QTD_PONTOS_ATRIBUTOS)        
 
         espada_ini = self._inventario._itens[nome_personagem][4]
         cetro_ini = self._inventario._itens[nome_personagem][5]
@@ -73,12 +78,12 @@ class Personagem:
         print('Escolha qual equipamento deseja iniciar a sua campanha!!')
         while True:
             try:
-                opc_equip = int(input(print(f'{espada_ini['cod']} - {espada_ini['nome']} - Dano: {espada_ini['dano_min']} - {espada_ini['dano_max']} - {espada_ini['bonus']} pontos de bônus em {espada_ini['tipo_bonus']}\n'
-                                           +f'{cetro_ini['cod']} - {cetro_ini['nome']} - Dano: {cetro_ini['dano_min']} - {cetro_ini['dano_max']} - {cetro_ini['bonus']} pontos de bônus em {cetro_ini['tipo_bonus']}\n: ')))
+                opc_equip = int(input(f'{espada_ini['cod']} - {espada_ini['nome']} - Dano: {espada_ini['dano_min']} - {espada_ini['dano_max']} - {espada_ini['bonus']} pontos de bônus em {espada_ini['tipo_bonus']}\n'
+                                     +f'{cetro_ini['cod']} - {cetro_ini['nome']} - Dano: {cetro_ini['dano_min']} - {cetro_ini['dano_max']} - {cetro_ini['bonus']} pontos de bônus em {cetro_ini['tipo_bonus']}\n::: '))
                 if opc_equip >= 4 and opc_equip <= 5:
                     self._inventario.adicionar_item(nome_personagem, opc_equip)
                     self._equipamentos.equipar_primeiro_item(nome_personagem, opc_equip)
-                    self.update_dados(nome_personagem)
+                    self.update_dados(nome_personagem, True)
                     break
                 else:
                     print('\nOpção Inválida! Selecione uma opção válida\n')
@@ -87,94 +92,106 @@ class Personagem:
                 print('Entrada inválida! Por favor, digite um número')
             except KeyError:
                     print('Item não encontrado para a opção escolhida')
-                
-    
-    def usar_magia(self, nome_personagem, self_enemy: bool):
-        pass
+        
+        self._inventario.adicionar_item(nome_personagem, 1, 5)
+        self._inventario.adicionar_item(nome_personagem, 3, 2)
 
-    def acao_turno(self, player, inimigo, acao, cod_item = 0, cod_magia = ''):  
+    def acao_turno(self, nome_player, nome_inimigo, acao, cod_item = 0, cod_magia = ''):  
         dano_causado_player = 0      
-        defesa_inimigo = self._atributos.retornar_atributo(inimigo, DEFESA)
+        defesa_inimigo = 0
 
         if acao == ATACAR:
-            cod_arma_player = self._equipamentos.retornar_arma_escudo(player, ARMA)
-            dano_min_player = Itens._itens[player][cod_arma_player]['dano_min']
-            dano_max_player = Itens._itens[player][cod_arma_player]['dano_max']
+            cod_arma_player = self._equipamentos.retornar_arma_escudo(nome_player, ARMA)            
+            dano_min_player = Itens._itens[nome_player][cod_arma_player]['dano_min']
+            dano_max_player = Itens._itens[nome_player][cod_arma_player]['dano_max']
 
-            str_player = self._atributos.retornar_atributo(player, FORCA)
-            dano_causado_player = random.randint(dano_min_player, dano_max_player) + (str_player * 3)
-            
-            dano_causado_player -= defesa_inimigo
+            str_player = self._atributos.retornar_atributo(nome_player, FORCA)
+            dano_causado_player = random.randint(dano_min_player, dano_max_player) + (str_player * 3)            
         
-        elif acao == USAR_MAGIA:
-            if cod_magia not in ['cure', 'restore']:
-                dano_causado_player = self._magias.magia_ataque(cod_magia, self._atributos.retornar_atributo(player, INTELIGENCIA))
-                dano_causado_player -= defesa_inimigo      
-        
-
-        cod_arma_inimigo = self._equipamentos.retornar_arma_escudo(player, ARMA)
-        dano_min_inimigo = Itens._itens[player][cod_arma_inimigo]['dano_min']
-        dano_max_inimigo = Itens._itens[player][cod_arma_inimigo]['dano_max']
-
-        str_inimigo = self._atributos.retornar_atributo(player, FORCA)
-        dano_causado_inimigo = random.randint(dano_min_inimigo, dano_max_inimigo) + (str_inimigo * 3)
-
-        defesa_player = self._atributos.retornar_atributo(player, DEFESA)
-        dano_causado_inimigo -= defesa_player        
+        elif acao == USAR_MAGIA and cod_magia not in ['cure', 'restore']:
+            dano_causado_player = self._magias.magia_ataque(cod_magia, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))               
         
         for player in Personagem.personagens:
-            if player.nome == player:
-                hp_player = player.HP
-                xp_level_up = player.XPup
-                xp_atual_player = player.XP
-
+            if player.nome == nome_player:
                 if acao == USAR_ITEM:
                     player._inventario.usar_pocao(player.nome, cod_item)
                     
                     if cod_item == 1 or cod_item == 2:
-                        player.HP += Itens._itens[player][cod_item]['cura']
+                        player.HP += Itens._itens[nome_player][cod_item]['cura']
                         if player.HP > player.HPmax:
                             player.HP = player.HPmax
                     else:
-                        player.MP += Itens._itens[player][cod_item]['cura']
+                        player.MP += Itens._itens[nome_player][cod_item]['cura']
                         if player.MP > player.MPmax:
                             player.MP = player.MPmax
                 
                 elif acao == USAR_MAGIA and cod_magia in ['cure', 'restore']:
                     if cod_magia == 'cure':
-                        player.HP += player._magias.cure(player.HPmax, self._atributos.retornar_atributo(player, INTELIGENCIA))
+                        player.HP += player._magias.cure(player.HPmax, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))
                         if player.HP > player.HPmax:
                             player.HP = player.HPmax
                     else:
                         player.HP = player._magias.restore(player.HPmax)
 
                 for inimigo in Personagem.personagens:
-                    if inimigo.nome == inimigo:
-                        hp_inimigo = inimigo.HP
-                        xp_inimigo = inimigo.XP    
+                    if inimigo.nome == nome_inimigo:
+                        dano_min_inimigo = Itens._itens[nome_player][inimigo.cod_arma]['dano_min']
+                        dano_max_inimigo = Itens._itens[nome_player][inimigo.cod_arma]['dano_max'] 
+                        dano_causado_inimigo = random.randint(dano_min_inimigo, dano_max_inimigo) + (inimigo.dano_base)
+                        defesa_player = self._atributos.retornar_atributo(nome_player, DEFESA)
+                        dano_causado_inimigo -= defesa_player  
+                        defesa_inimigo = inimigo.defesa_base
 
-                hp_inimigo -= dano_causado_player
-                if hp_inimigo <= 0:
-                    #inimigo morreu
-                    xp_atual_player = xp_inimigo
+                        dano_causado_player -= defesa_inimigo
 
-                    if xp_atual_player >= xp_level_up:
-                        #passou de level
-                        pass
-                    
-                else:
-                    #inimigo ataca
-                    hp_player -= dano_causado_inimigo
-                    pass
+                        print(f'{inimigo.nome} perdeu {dano_causado_player} pontos de vida!')
+                        inimigo.HP -= dano_causado_player
 
-        
-        return 0 
+                        #INIMIGO MORREU
+                        if inimigo.HP <= 0:
+                            print(f'{inimigo.nome} morreu')            
+                            print(f'Experiência antes de matar o goblin: {player.XP}/{player.XPup}')        
+                            player.XP = inimigo.XP
+                            print(f'Experiência depis de matar o goblin: {player.XP}/{player.XPup}')   
+
+                            # *****************************************
+                            # *****************************************
+                            #
+                            # FAZER FUNÇÃO PARA DROP DE ITENS DO INMIGO
+                            #
+                            # *****************************************
+                            # *****************************************
+
+                            if player.XP >= player.XPup:
+                                #PASSOU LEVEL
+                                self.passou_level(nome_player)
+                                player.HP = player.HPmax
+                                player.MP = player.MPmax
+                                
+                                #VERIFICAR CONTINUAÇÃO
+
+                        else:
+                            print(f'{inimigo.nome} está com {inimigo.HP} pontos de vida!')
+                            #INIMIGO ATACA
+                            player.HP -= dano_causado_inimigo
+                            print(f'{player.nome} perdeu {dano_causado_inimigo} pontos de vida!')
+
+                            print(f'{player.nome} está com {player.HP} pontos de vida!')
 
     def equipar(self, nome_personagem):
         if self._equipamentos.equipar(nome_personagem):
             self.update_dados(nome_personagem)
 
-    def update_dados(self, nome_personagem):
+    def listar_atributos(self, nome_personagem):
+        self._atributos.listar_atributos(nome_personagem)
+
+    def mostrar_hp_mp(self, nome_personagem):
+        for personagem in Personagem.personagens:
+            if personagem.nome == nome_personagem:
+                print(f'{self.HP} / {self.HPmax}')
+                print(f'{self.MP} / {self.MPmax}')
+
+    def update_dados(self, nome_personagem, first_update = False):
         str = 0
         int = 0
         def_escudo = 0
@@ -196,16 +213,23 @@ class Personagem:
 
         for personagem in self.personagens:
             if personagem.nome == nome_personagem:
-                self.HPmax = 100 + (self._level * 25) + (str * 2) + (vit * 10)
-                self.MPmax = 80 + (self._level * 15) + (int * 10)
-                self._atributos.adicionar_remover_ponto_atributo(nome_personagem, INTELIGENCIA, True, int)
-                self._atributos.adicionar_remover_ponto_atributo(nome_personagem, FORCA, True, str)
-                self._atributos.adicionar_remover_ponto_atributo(nome_personagem, DEFESA, True, def_escudo)
+                personagem._atributos.adicionar_remover_ponto_atributo(nome_personagem, INTELIGENCIA, True, int)
+                personagem._atributos.adicionar_remover_ponto_atributo(nome_personagem, FORCA, True, str)
+                personagem._atributos.adicionar_remover_ponto_atributo(nome_personagem, DEFESA, True, def_escudo)
 
-    def final_batalha(self, nome_personagem, nome_inimigo):
-        pass
+                personagem.HPmax = 100 + (personagem._level * 25) + (str * 2) + (vit * 10)
+                personagem.MPmax = 80 + (personagem._level * 15) + (int * 10)
+                
+                if personagem.HP > personagem.HPmax:
+                    personagem.HP = personagem.HPmax
+
+                if personagem.MP > personagem.MPmax:
+                    personagem.MP = personagem.MPmax
+
+                if first_update:
+                    personagem.HP = personagem.HPmax
+                    personagem.MP = personagem.MPmax
 
     def passou_level(self, nome_personagem):
-        for personagem in Personagem.personagens:
-            if personagem.nome == nome_personagem:
-                pass
+        self.while_incluir_atributos(nome_personagem, PONTOS_LEVEL_UP)
+        self.update_dados(nome_personagem)
