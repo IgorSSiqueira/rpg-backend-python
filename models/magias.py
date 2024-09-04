@@ -1,9 +1,10 @@
+from models.constantes import FOGO, CURA, RESTAURAR
 class Magias:
     def __init__(self):
         self._magias = {
-            'fire': {'mana': 5, 'dano_base': 15},
-            'cure': {'mana': 20, 'procentagem_cura': 0.20},
-            'restore': {'mana': 70}
+            FOGO: {'mana': 5, 'dano_base': 15},
+            CURA: {'mana': 20, 'procentagem_cura': 0.20},
+            RESTAURAR: {'mana': 70}
         }
 
     def custo_mana(self, magia):

@@ -3,7 +3,8 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP
+from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, RESTAURAR
+from utils.mensagens import esperar_jogador, esolher_acao, retornar_magias_disponiveis
 import os
 import msvcrt
 
@@ -67,8 +68,8 @@ class Personagem:
                     print('Item não encontrado para a opção escolhida')
 
     def iniciar_rpg(self, nome_personagem):       
-        print(f'Olá {nome_personagem}, seja bem vindo!! (clique em qualquer tecla para continuar)') 
-        msvcrt.getch()
+        print(f'Olá {nome_personagem}, seja bem vindo!!')
+        esperar_jogador()
         self.while_incluir_atributos(nome_personagem, QTD_PONTOS_ATRIBUTOS)        
 
         espada_ini = self._inventario._itens[nome_personagem][4]
@@ -96,24 +97,53 @@ class Personagem:
         self._inventario.adicionar_item(nome_personagem, 1, 5)
         self._inventario.adicionar_item(nome_personagem, 3, 2)
 
-    def acao_turno(self, nome_player, nome_inimigo, acao, cod_item = 0, cod_magia = ''):  
+    # def informacoes_batalha(self, nome_personagem):
+    #     os.system('cls')
+    #     for jogador in Personagem.personagens:
+    #         if jogador.nome == nome_personagem:                
+    #             print(f'Vida: {self.HP} / {self.HPmax}')
+    #             print(f'Mana: {self.MP} / {self.MPmax}')
+    #             print(f'XP: {self.XP} / {self.XPup}')
+
+
+    def acao_turno(self, nome_player, nome_inimigo):  
         dano_causado_player = 0      
         defesa_inimigo = 0
 
-        if acao == ATACAR:
-            cod_arma_player = self._equipamentos.retornar_arma_escudo(nome_player, ARMA)            
-            dano_min_player = Itens._itens[nome_player][cod_arma_player]['dano_min']
-            dano_max_player = Itens._itens[nome_player][cod_arma_player]['dano_max']
-
-            str_player = self._atributos.retornar_atributo(nome_player, FORCA)
-            dano_causado_player = random.randint(dano_min_player, dano_max_player) + (str_player * 3)            
-        
-        elif acao == USAR_MAGIA and cod_magia not in ['cure', 'restore']:
-            dano_causado_player = self._magias.magia_ataque(cod_magia, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))               
-        
         for player in Personagem.personagens:
-            if player.nome == nome_player:
-                if acao == USAR_ITEM:
+            if player.nome == nome_player: 
+                acao_turno = esolher_acao(player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
+                
+                if acao_turno == ATACAR:
+                    cod_arma_player = self._equipamentos.retornar_arma_escudo(nome_player, ARMA)            
+                    dano_min_player = Itens._itens[nome_player][cod_arma_player]['dano_min']
+                    dano_max_player = Itens._itens[nome_player][cod_arma_player]['dano_max']
+
+                    str_player = self._atributos.retornar_atributo(nome_player, FORCA)
+                    dano_causado_player = random.randint(dano_min_player, dano_max_player) + (str_player * 3)            
+                
+                elif acao_turno == USAR_MAGIA:
+                    if player.MP > 5:
+                        opc_magia = retornar_magias_disponiveis(player.MP)
+                        if opc_magia == '':
+                            return ''
+                    
+                    if opc_magia == FOGO:
+                        dano_causado_player = self._magias.magia_ataque(opc_magia, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))               
+                    else: 
+                        if opc_magia == CURA:
+                            player.HP += player._magias.cure(player.HPmax, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))
+                            if player.HP > player.HPmax:
+                                player.HP = player.HPmax
+                        else:
+                            player.HP = player._magias.restore(player.HPmax)
+
+                if acao_turno == USAR_ITEM:
+                    
+                    #VEIRIFCAR SE O JOGADOR TEM POÇÕES NA MOCHILA
+                    #SE TIVER, DAR O OPÇÃO PRA ELE USAR
+                    
+
                     player._inventario.usar_pocao(player.nome, cod_item)
                     
                     if cod_item == 1 or cod_item == 2:
@@ -125,13 +155,7 @@ class Personagem:
                         if player.MP > player.MPmax:
                             player.MP = player.MPmax
                 
-                elif acao == USAR_MAGIA and cod_magia in ['cure', 'restore']:
-                    if cod_magia == 'cure':
-                        player.HP += player._magias.cure(player.HPmax, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))
-                        if player.HP > player.HPmax:
-                            player.HP = player.HPmax
-                    else:
-                        player.HP = player._magias.restore(player.HPmax)
+                
 
                 for inimigo in Personagem.personagens:
                     if inimigo.nome == nome_inimigo:
@@ -167,8 +191,11 @@ class Personagem:
                                 self.passou_level(nome_player)
                                 player.HP = player.HPmax
                                 player.MP = player.MPmax
-                                
+                                # *****************************************
+                                # *****************************************
                                 #VERIFICAR CONTINUAÇÃO
+                                # *****************************************
+                                # *****************************************
 
                         else:
                             print(f'{inimigo.nome} está com {inimigo.HP} pontos de vida!')
