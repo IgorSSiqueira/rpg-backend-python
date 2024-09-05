@@ -1,6 +1,6 @@
 import os
 from models.personagem import Personagem
-from models.constantes import USAR_ITEM, ATACAR, USAR_MAGIA
+from models.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU
 from models.inimigos import gerar_inimigo
 from utils.mensagens import INICIANDO_RPG, esperar_jogador
 
@@ -20,12 +20,22 @@ def main():
     inimigo_gerado = gerar_inimigo(Player._level)
     Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'])
 
-    opc = ''
-    while opc == '':
-        opc = Player.acao_turno(Player.nome, Inimigo.nome)
+    dados_batalha = BATALHA_CONTINUA
+    while dados_batalha == BATALHA_CONTINUA:
+        dados_batalha = Player.acao_turno(Player.nome, Inimigo.nome)
 
-    # PRECISAMOS FAZER AGORA A PARTE DA BATALHA
-    # SEMPRE MOSTRAR A VIDA DO PLAYER
+        if dados_batalha == '':
+            dados_batalha = BATALHA_CONTINUA
+            continue
+        elif dados_batalha == BATALHA_CONTINUA:
+            continue
+        elif dados_batalha == INIMIGO_MORREU:
+            break
+        elif dados_batalha == PLAYER_MORREU:
+            print('GAME OVER')
+            esperar_jogador()
+
+            #CHAMAR FUNÇÃO PARA INICIAR O JOGO NOVAMENTE
 
     
 

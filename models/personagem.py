@@ -3,10 +3,9 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, RESTAURAR
+from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU
 from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias
 import os
-import msvcrt
 
 class Personagem:
     personagens = []
@@ -96,6 +95,7 @@ class Personagem:
         
         self._inventario.adicionar_item(nome_personagem, 1, 5)
         self._inventario.adicionar_item(nome_personagem, 3, 2)
+        esperar_jogador()
 
     # def informacoes_batalha(self, nome_personagem):
     #     os.system('cls')
@@ -139,7 +139,7 @@ class Personagem:
                             player.HP = player._magias.restore(player.HPmax)
 
                 if acao_turno == USAR_ITEM:
-                    cod_pocao = self._inventario.verificar_usar_pocao(player.nome)
+                    cod_pocao = self._inventario.verificar_usar_pocao(player.nome, player.HP, player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
 
                     if cod_pocao == '':
                         return ''
@@ -147,15 +147,19 @@ class Personagem:
                     self._inventario.usar_pocao(player.nome, cod_pocao)
                     
                     if cod_pocao == 1 or cod_pocao == 2:
+                        print(f'{player.nome} utilizou uma poção de cura, que restaura 30 pontos de HP!')
                         player.HP += Itens._itens[nome_player][cod_pocao]['cura']
                         if player.HP > player.HPmax:
                             player.HP = player.HPmax
+
+                        print(f'{player.nome} está agora com {player.HP}/{player.HPmax} pontos de HP!')
                     else:
+                        print(f'{player.nome} utilizou uma poção de cura, que restaura 80 pontos de HP!\n')
                         player.MP += Itens._itens[nome_player][cod_pocao]['cura']
                         if player.MP > player.MPmax:
                             player.MP = player.MPmax
-                
-                
+                        
+                        print(f'{player.nome} está agora com {player.HP}/{player.HPmax} pontos de HP!\n')
 
                 for inimigo in Personagem.personagens:
                     if inimigo.nome == nome_inimigo:
@@ -166,17 +170,15 @@ class Personagem:
                         dano_causado_inimigo -= defesa_player  
                         defesa_inimigo = inimigo.defesa_base
 
-                        dano_causado_player -= defesa_inimigo
-
-                        print(f'{inimigo.nome} perdeu {dano_causado_player} pontos de vida!')
-                        inimigo.HP -= dano_causado_player
+                        if not acao_turno == USAR_ITEM:
+                            dano_causado_player -= defesa_inimigo
+                            print(f'{inimigo.nome} perdeu {dano_causado_player} pontos de vida!')
+                            inimigo.HP -= dano_causado_player
 
                         #INIMIGO MORREU
                         if inimigo.HP <= 0:
-                            print(f'{inimigo.nome} morreu')            
-                            print(f'Experiência antes de matar o goblin: {player.XP}/{player.XPup}')        
-                            player.XP = inimigo.XP
-                            print(f'Experiência depis de matar o goblin: {player.XP}/{player.XPup}')   
+                            print(f'{inimigo.nome} morreu. Você ganhou {inimigo.XP} de experiência!\n')                 
+                            player.XP += inimigo.XP 
 
                             # *****************************************
                             # *****************************************
@@ -188,6 +190,7 @@ class Personagem:
 
                             if player.XP >= player.XPup:
                                 #PASSOU LEVEL
+                                print(f'Parabéns, você subiu para o level {player._level + 1}\n')
                                 self.passou_level(nome_player)
                                 player.HP = player.HPmax
                                 player.MP = player.MPmax
@@ -196,14 +199,21 @@ class Personagem:
                                 # VERIFICAR CONTINUAÇÃO
                                 # *****************************************
                                 # *****************************************
+                            
+                            return INIMIGO_MORREU
 
                         else:
                             print(f'{inimigo.nome} está com {inimigo.HP} pontos de vida!')
+                           
                             #INIMIGO ATACA
                             player.HP -= dano_causado_inimigo
-                            print(f'{player.nome} perdeu {dano_causado_inimigo} pontos de vida!')
+                            print(f'{player.nome} perdeu {dano_causado_inimigo} pontos de vida!\n')
+                            esperar_jogador()
 
-                            print(f'{player.nome} está com {player.HP} pontos de vida!')
+                            if player.HP <= 0:
+                                return PLAYER_MORREU
+                            
+                            return BATALHA_CONTINUA
 
     def equipar(self, nome_personagem):
         if self._equipamentos.equipar(nome_personagem):
@@ -258,5 +268,11 @@ class Personagem:
                     personagem.MP = personagem.MPmax
 
     def passou_level(self, nome_personagem):
+        for player in Personagem.personagens:
+            if player.nome == nome_personagem:
+                player._level += 1
+                player.XP = 0
+                player.XPup = (30 * player._level * 1.4)
+
         self.while_incluir_atributos(nome_personagem, PONTOS_LEVEL_UP)
         self.update_dados(nome_personagem)

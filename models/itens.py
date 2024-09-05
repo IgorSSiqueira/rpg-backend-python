@@ -19,19 +19,15 @@ class Itens:
                 9: {'cod': 9, 'nome': 'Espada Vampírica', 'quantidade': 0, 'dano_min': 5, 'dano_max': 25, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 8, 'tipo_especial': 'roubo_vida', 'especial': 100, 'desc_esp': 'Restaura 100% do dano realizado'},
             }
 
-    # @classmethod
-    # def verificar_quantidade_item(cls, nome_personagem, cod):
-    #     return cls._itens[nome_personagem][cod]['quantidade']
-
     @classmethod
-    def verificar_usar_pocao(cls, nome_personagem):
+    def verificar_usar_pocao(cls, nome_personagem, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
         if nome_personagem in cls._itens:
             pocoes_inventario = cls._itens[nome_personagem]
             potion = pocoes_inventario[1]['quantidade']
             hipotion = pocoes_inventario[2]['quantidade']
             manapotion = pocoes_inventario[3]['quantidade']
 
-            pocao_utilizada = retornar_usar_pocao(potion, hipotion, manapotion)
+            pocao_utilizada = retornar_usar_pocao(potion, hipotion, manapotion, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up)
 
             if pocao_utilizada == '':
                 return ''
@@ -144,17 +140,17 @@ class Itens:
             return False
 
     @classmethod
-    def usar_pocao(cls, nome_personagem, tipo_item):
-        if tipo_item not in [1, 2, 3]:
-            print(f"Tipo de item '{tipo_item}' inválido")
+    def usar_pocao(cls, nome_personagem, cod_pocao):
+        if cod_pocao not in [1, 2, 3]:
+            print(f"Tipo de item '{cod_pocao}' inválido")
             return False
 
         if nome_personagem in cls._itens:
-            if tipo_item[nome_personagem].get(tipo_item, 0) > 0:
-                cls._itens[nome_personagem][tipo_item] -= 1
+            if cls._itens[nome_personagem][cod_pocao].get('quantidade', 0) > 0:
+                cls._itens[nome_personagem][cod_pocao]['quantidade'] -= 1
                 return True
             else:
-                print(f"Quantidade de '{tipo_item}' insuficiente")
+                print(f"Quantidade de '{cls._itens[nome_personagem][cod_pocao]['nome']}' insuficiente")
                 return False
         else:
             print(f"Personagem '{nome_personagem}' não encontrado")

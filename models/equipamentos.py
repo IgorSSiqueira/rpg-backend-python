@@ -16,7 +16,7 @@ class Equipamentos:
     def equipar_item(nome_personagem, cod, espaco):
         Equipamentos._equipados[nome_personagem][espaco] = Itens._itens[nome_personagem][cod]
         Itens.remover_item(nome_personagem, cod, 1)
-        print(f'{espaco} equipado(a)!')
+        print(f'{Itens._itens[nome_personagem][cod]['nome']} equipado(a)!')
     
     def desequipar_item(nome_personagem, espaco):
         Itens.adicionar_item(nome_personagem, Equipamentos._equipados[nome_personagem][espaco]['cod'], 1)
