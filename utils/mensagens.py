@@ -9,12 +9,12 @@ def esperar_jogador():
     print('Aperte qualquer tecla para continuar!')
     msvcrt.getch()
 
-def while_acao(texto_info, texto_input, nro_maximo):
+def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False):
     while True:
         try:
             print(texto_info)
             opcao_selecionada = int(input(texto_input))
-            if opcao_selecionada == 4:
+            if opcao_selecionada == 4 and not acao_inicial:
                 break
             elif 0 > opcao_selecionada >= nro_maximo:
                 break
@@ -28,7 +28,7 @@ def while_acao(texto_info, texto_input, nro_maximo):
     return opcao_selecionada
 
 
-def esolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
+def escolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
     os.system('cls')                
     print(f'Vida: {hp_atual} / {hp_max}')
     print(f'Mana: {mp_atual} / {mp_max}')
@@ -40,7 +40,7 @@ def esolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
             +'3 - Usar um item\n')
     texto_input = 'Qual ação deseja realizar?\n::: '
 
-    acao = while_acao(texto_info, texto_input)
+    acao = while_acao(texto_info, texto_input, 3, True)
 
     if acao == 1:
         return ATACAR
@@ -49,14 +49,18 @@ def esolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
     else:
         return USAR_ITEM 
 
-def retornar_magias_disponiveis(mana_player):
-    os.system('cls')
+def retornar_usar_magias(mana_player, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
+    os.system('cls') 
+    print(f'Vida: {hp_atual} / {hp_max}')
+    print(f'Mana: {mp_atual} / {mp_max}')
+    print(f'XP: {xp_atual} / {xp_level_up}\n')
+
     if mana_player < 5:
         print('Não é possível utilizar nenhuma magia com a quantidade de mana atual!')
         esperar_jogador()
         return ''
     
-    texto_input = ('Escolha a magia que deseja usar:')
+    texto_input = 'Escolha a magia que deseja usar:'
     if mana_player > 70:
         texto_info = ('Magia(s) disponível!\n'
                       +'1 - Fire\n'
@@ -85,4 +89,32 @@ def retornar_magias_disponiveis(mana_player):
         return RESTAURAR
     else:
         return ''
+
+
+def retornar_usar_pocao(qtd_potion, qtd_hipotion, qtd_manapotion, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
+    os.system('cls') 
+    print(f'Vida: {hp_atual} / {hp_max}')
+    print(f'Mana: {mp_atual} / {mp_max}')
+    print(f'XP: {xp_atual} / {xp_level_up}\n')
+
+    if qtd_potion == 0 and qtd_hipotion == 0 and qtd_manapotion == 0:
+        return ''
     
+    texto_input = 'Selecione qual item deseta usar!\n'
+    texto_info = []
+
+    if qtd_potion > 0:
+        texto_info.append('1 - Usar Potion. Restaura 30 pontos de HP')
+    
+    if qtd_hipotion > 1:
+        texto_info.append('2 - Usar Hi Potion. Restaura 80 pontos de HP')
+
+    if qtd_manapotion > 0:
+        texto_info.append('3 - Usar Mana Potion. Restaura 50 pontos de MP')
+    
+    opc = while_acao(texto_info, texto_input)
+    
+    if opc == 4:
+        return ''
+    else:
+        return opc

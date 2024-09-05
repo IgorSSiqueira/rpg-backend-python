@@ -4,7 +4,7 @@ from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
 from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, RESTAURAR
-from utils.mensagens import esperar_jogador, esolher_acao, retornar_magias_disponiveis
+from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias
 import os
 import msvcrt
 
@@ -112,7 +112,7 @@ class Personagem:
 
         for player in Personagem.personagens:
             if player.nome == nome_player: 
-                acao_turno = esolher_acao(player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
+                acao_turno = escolher_acao(player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
                 
                 if acao_turno == ATACAR:
                     cod_arma_player = self._equipamentos.retornar_arma_escudo(nome_player, ARMA)            
@@ -124,7 +124,7 @@ class Personagem:
                 
                 elif acao_turno == USAR_MAGIA:
                     if player.MP > 5:
-                        opc_magia = retornar_magias_disponiveis(player.MP)
+                        opc_magia = retornar_usar_magias(player.MP, player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
                         if opc_magia == '':
                             return ''
                     
@@ -139,19 +139,19 @@ class Personagem:
                             player.HP = player._magias.restore(player.HPmax)
 
                 if acao_turno == USAR_ITEM:
-                    
-                    #VEIRIFCAR SE O JOGADOR TEM POÇÕES NA MOCHILA
-                    #SE TIVER, DAR O OPÇÃO PRA ELE USAR
-                    
+                    cod_pocao = self._inventario.verificar_usar_pocao(player.nome)
 
-                    player._inventario.usar_pocao(player.nome, cod_item)
+                    if cod_pocao == '':
+                        return ''
                     
-                    if cod_item == 1 or cod_item == 2:
-                        player.HP += Itens._itens[nome_player][cod_item]['cura']
+                    self._inventario.usar_pocao(player.nome, cod_pocao)
+                    
+                    if cod_pocao == 1 or cod_pocao == 2:
+                        player.HP += Itens._itens[nome_player][cod_pocao]['cura']
                         if player.HP > player.HPmax:
                             player.HP = player.HPmax
                     else:
-                        player.MP += Itens._itens[nome_player][cod_item]['cura']
+                        player.MP += Itens._itens[nome_player][cod_pocao]['cura']
                         if player.MP > player.MPmax:
                             player.MP = player.MPmax
                 
@@ -193,7 +193,7 @@ class Personagem:
                                 player.MP = player.MPmax
                                 # *****************************************
                                 # *****************************************
-                                #VERIFICAR CONTINUAÇÃO
+                                # VERIFICAR CONTINUAÇÃO
                                 # *****************************************
                                 # *****************************************
 

@@ -1,3 +1,5 @@
+from utils.mensagens import retornar_usar_pocao
+
 class Itens:
     _itens = {}
 
@@ -17,18 +19,25 @@ class Itens:
                 9: {'cod': 9, 'nome': 'Espada Vampírica', 'quantidade': 0, 'dano_min': 5, 'dano_max': 25, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 8, 'tipo_especial': 'roubo_vida', 'especial': 100, 'desc_esp': 'Restaura 100% do dano realizado'},
             }
 
-    @classmethod
-    def verificar_quantidade_item(cls, nome_personagem, cod):
-        return cls._itens[nome_personagem][cod]['quantidade']
+    # @classmethod
+    # def verificar_quantidade_item(cls, nome_personagem, cod):
+    #     return cls._itens[nome_personagem][cod]['quantidade']
 
     @classmethod
-    def verificar_pocoes(cls, nome_personagem):
+    def verificar_usar_pocao(cls, nome_personagem):
         if nome_personagem in cls._itens:
-            return (
-                f"\nPossui: {cls._itens[nome_personagem][1]} Potions\n"
-                f"{cls._itens[nome_personagem][2]} Hi Potions\n"
-                f"{cls._itens[nome_personagem][3]} Mana Potions\n\n"
-            )
+            pocoes_inventario = cls._itens[nome_personagem]
+            potion = pocoes_inventario[1]['quantidade']
+            hipotion = pocoes_inventario[2]['quantidade']
+            manapotion = pocoes_inventario[3]['quantidade']
+
+            pocao_utilizada = retornar_usar_pocao(potion, hipotion, manapotion)
+
+            if pocao_utilizada == '':
+                return ''
+            else:
+                return pocao_utilizada
+
         else:
             return f"Personagem '{nome_personagem}' não encontrado"
     
