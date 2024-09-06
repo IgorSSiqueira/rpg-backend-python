@@ -3,8 +3,8 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from models.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU
-from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias
+from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU
+from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, acao_antes_batalha
 import os
 
 class Personagem:
@@ -23,6 +23,7 @@ class Personagem:
             self.XP = 0
             self.XPup = 30
             self.gold = 0
+            self.area_atual = 1
             self._magias = Magias()
             self._equipamentos = Equipamentos(nome)
             self._inventario = Itens(nome)  
@@ -99,6 +100,12 @@ class Personagem:
         self._inventario.adicionar_item(nome_personagem, 1, 5)
         self._inventario.adicionar_item(nome_personagem, 3, 2)
         esperar_jogador()
+
+    def acao_antes_batalha(self, nome_player):
+        for player in Personagem.personagens:
+            if player.nome == nome_player: 
+                acao_realizada = acao_antes_batalha(player.area_atual, player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
+                
 
     def acao_turno(self, nome_player, nome_inimigo):  
         dano_causado_player = 0      

@@ -1,5 +1,5 @@
 from models.itens import Itens
-from models.constantes import ARMA, ESCUDO
+from utils.constantes import ARMA, ESCUDO
 
 class Equipamentos:
     _equipados = {}

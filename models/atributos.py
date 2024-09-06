@@ -1,4 +1,4 @@
-from models.constantes import DEFESA, FORCA, INTELIGENCIA, VITALIDADE
+from utils.constantes import DEFESA, FORCA, INTELIGENCIA, VITALIDADE
 
 class Atributos:
     _atributos = {}

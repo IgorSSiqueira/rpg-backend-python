@@ -1,4 +1,4 @@
-from models.constantes import FOGO, CURA, RESTAURAR
+from utils.constantes import FOGO, CURA, RESTAURAR
 class Magias:
     def __init__(self):
         self._magias = {

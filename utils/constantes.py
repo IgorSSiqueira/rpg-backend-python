@@ -12,10 +12,18 @@ DEFESA = 'defesa'
 ARMA = 'arma'
 ESCUDO = 'escudo'
 
-#AÇÕES DO TURNO
+#AÇÕES
 ATACAR = 'atacar'
 USAR_ITEM = 'usar_item'
 USAR_MAGIA = 'usar_magia'
+PROCURA_INIMIGO = 'nova_batalha'
+USAR_MAGIA_ANTES_BATALHA = True
+OLHAR_INVENTARIO = 'inventario'
+TROCAR_EQUIPAMENTO = 'equip'
+AREA_PROXIMA = 'area_proxima'
+AREA_ANTERIOR = 'area_anterior'
+
+
 
 #MAGIAS
 FOGO = 'fire'
