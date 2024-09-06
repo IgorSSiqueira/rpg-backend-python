@@ -10,7 +10,7 @@ import os
 class Personagem:
     personagens = []
 
-    def __init__(self, nome, player:bool, level = 1, cod_arma_inimigo = 4):
+    def __init__(self, nome, player:bool, level = 1, cod_arma_inimigo = 4, gold_drop = 0, is_boss = False):
         self._nome = nome 
         self._player = player   
         
@@ -22,18 +22,21 @@ class Personagem:
             self.MP = self.MPmax
             self.XP = 0
             self.XPup = 30
+            self.gold = 0
             self._magias = Magias()
             self._equipamentos = Equipamentos(nome)
             self._inventario = Itens(nome)  
             self._atributos = Atributos(nome)   
         else:
             self._level = level
-            self.HPmax = 40 * level
+            self.HPmax = ((60 * level) * 2.2) if is_boss else (60 * level)
             self.HP = self.HPmax
-            self.XP = 10 + (10 * round(level * 1.2))
-            self.dano_base = random.randint(level, (level * 7))
-            self.defesa_base = random.randint(level, (level * 4))
+            self.XP = (20 + (20 * round(level * 1.8))) if is_boss else (10 + (10 * round(level * 1.2)))
+            self.dano_base = (random.randint(level, (level * 7)) * 4) if is_boss else (random.randint(level, (level * 7)))
+            self.defesa_base = (random.randint(level, (level * 4)) * 1.5) if is_boss else (random.randint(level, (level * 4)))
             self.cod_arma = cod_arma_inimigo
+            self.gold_drop = gold_drop
+            self.is_boss = is_boss
 
         Personagem.personagens.append(self)
 
@@ -96,15 +99,6 @@ class Personagem:
         self._inventario.adicionar_item(nome_personagem, 1, 5)
         self._inventario.adicionar_item(nome_personagem, 3, 2)
         esperar_jogador()
-
-    # def informacoes_batalha(self, nome_personagem):
-    #     os.system('cls')
-    #     for jogador in Personagem.personagens:
-    #         if jogador.nome == nome_personagem:                
-    #             print(f'Vida: {self.HP} / {self.HPmax}')
-    #             print(f'Mana: {self.MP} / {self.MPmax}')
-    #             print(f'XP: {self.XP} / {self.XPup}')
-
 
     def acao_turno(self, nome_player, nome_inimigo):  
         dano_causado_player = 0      
@@ -182,11 +176,28 @@ class Personagem:
 
                             # *****************************************
                             # *****************************************
-                            #
-                            # FAZER FUNÇÃO PARA DROP DE ITENS DO INMIGO
-                            #
+                            #           DROPS DO INIMIGO ABAIXO
                             # *****************************************
                             # *****************************************
+
+                            player.gold = inimigo.gold_drop
+                            
+                            if random.randint(1, 100) <= self._inventario._itens[1]['drop_chance']:
+                                print(f'Inimigo dropou {self._inventario._itens[1]['nome']}')
+                                player._inventario.adicionar_item(player.nome, 1)
+                            
+                            if inimigo._level > 4:
+                                if random.randint(1, 100) <= self._inventario._itens[2]['drop_chance']:
+                                    print(f'Inimigo dropou {self._inventario._itens[2]['nome']}')
+                                    player._inventario.adicionar_item(player.nome, 2)
+
+                            if random.randint(1, 100) <= self._inventario._itens[3]['drop_chance']:
+                                print(f'Inimigo dropou {self._inventario._itens[3]['nome']}')
+                                player._inventario.adicionar_item(player.nome, 3)
+
+                            if random.randint(1, 100) <= (self._inventario._itens[inimigo.cod_arma]['drop_chance'] * 5 if inimigo.is_boss else self._inventario._itens[inimigo.cod_arma]['drop_chance']):
+                                print(f'Inimigo dropou {self._inventario._itens[inimigo.cod_arma]['nome']}')
+                                player._inventario.adicionar_item(player.nome, inimigo.cod_arma)
 
                             if player.XP >= player.XPup:
                                 #PASSOU LEVEL
@@ -207,7 +218,7 @@ class Personagem:
                            
                             #INIMIGO ATACA
                             player.HP -= dano_causado_inimigo
-                            print(f'{player.nome} perdeu {dano_causado_inimigo} pontos de vida!\n')
+                            print(f'O {inimigo.nome} te atacou de volta!\n{player.nome} perdeu {dano_causado_inimigo} pontos de vida!\n')
                             esperar_jogador()
 
                             if player.HP <= 0:

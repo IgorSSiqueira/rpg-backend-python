@@ -8,15 +8,18 @@ class Itens:
 
         if nome_personagem not in Itens._itens:
             Itens._itens[nome_personagem] = {
-                1: {'cod': 1, 'nome': 'Potion', 'quantidade': 0, 'cura': 30},
-                2: {'cod': 2, 'nome': 'Hi Potion', 'quantidade': 0, 'cura': 80},
-                3: {'cod': 3, 'nome': 'Mana Potion', 'quantidade': 0, 'cura': 50},
-                4: {'cod': 4, 'nome': 'Espada Inicial', 'quantidade': 0, 'dano_min': 8, 'dano_max': 12, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 5},
-                5: {'cod': 5, 'nome': 'Cetro Inicial', 'quantidade': 0, 'dano_min': 5, 'dano_max': 8, 'maos': 2, 'tipo_bonus': 'int', 'bonus': 20},
-                6: {'cod': 6, 'nome': 'Escudo Básico', 'quantidade': 0, 'dano_min': 0, 'dano_max': 0, 'maos': 1,'tipo_bonus': 'def', 'bonus': 5},
-                7: {'cod': 7, 'nome': 'Espada Longa', 'quantidade': 0, 'dano_min': 25, 'dano_max': 45, 'maos': 2, 'tipo_bonus': 'str', 'bonus': 15},
-                8: {'cod': 8, 'nome': 'Cetro Mágico', 'quantidade': 0, 'dano_min': 10, 'dano_max': 15, 'maos': 2, 'tipo_bonus': 'int', 'bonus': 50, 'tipo_especial': 'restaura_mana', 'especial': 50, 'desc_esp': 'Restaura 50 de mana quando mata um inimigo'},
-                9: {'cod': 9, 'nome': 'Espada Vampírica', 'quantidade': 0, 'dano_min': 5, 'dano_max': 25, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 8, 'tipo_especial': 'roubo_vida', 'especial': 100, 'desc_esp': 'Restaura 100% do dano realizado'},
+                1:  {'cod': 1 , 'nome': 'Potion'            , 'quantidade': 0, 'cura': 30, 'drop_chance': 10, 'custo_compra': 100, 'custo_venda': 30},
+                2:  {'cod': 2 , 'nome': 'Hi Potion'         , 'quantidade': 0, 'cura': 80, 'drop_chance': 3 , 'custo_compra': 500, 'custo_venda': 100},
+                3:  {'cod': 3 , 'nome': 'Mana Potion'       , 'quantidade': 0, 'cura': 50, 'drop_chance': 8 , 'custo_compra': 150, 'custo_venda': 40},
+ 
+                4:  {'cod': 4 , 'nome': 'Espada Inicial'    , 'quantidade': 0, 'dano_min': 8 , 'dano_max': 12, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 5 , 'drop_chance': 7 , 'custo_compra': 100, 'custo_venda': 10},
+                5:  {'cod': 5 , 'nome': 'Cetro Inicial'     , 'quantidade': 0, 'dano_min': 5 , 'dano_max': 8 , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 20, 'drop_chance': 7 , 'custo_compra': 100, 'custo_venda': 10},
+                6:  {'cod': 6 , 'nome': 'Escudo Básico'     , 'quantidade': 0, 'dano_min': 0 , 'dano_max': 0 , 'maos': 1, 'tipo_bonus': 'def', 'bonus': 5 , 'drop_chance': 13, 'custo_compra': 300, 'custo_venda': 50},
+                7:  {'cod': 7 , 'nome': 'Espada Longa'      , 'quantidade': 0, 'dano_min': 25, 'dano_max': 45, 'maos': 2, 'tipo_bonus': 'str', 'bonus': 15, 'drop_chance': 5 , 'custo_compra': 800, 'custo_venda': 240},
+                8:  {'cod': 8 , 'nome': 'Cetro Médio'       , 'quantidade': 0, 'dano_min': 10, 'dano_max': 15, 'maos': 2, 'tipo_bonus': 'int', 'bonus': 40, 'drop_chance': 5 , 'custo_compra': 800, 'custo_venda': 240},
+
+                9:  {'cod': 9 , 'nome': 'Cetro Mágico'      , 'quantidade': 0, 'dano_min': 20, 'dano_max': 30, 'maos': 2, 'tipo_bonus': 'int', 'bonus': 60, 'tipo_especial': 'restaura_mana', 'especial': 50 , 'desc_esp': 'Restaura 50 de mana quando mata um inimigo', 'drop_chance': 1  , 'custo_compra': 3000, 'custo_venda': 1},
+                10: {'cod': 10, 'nome': 'Espada Vampírica'  , 'quantidade': 0, 'dano_min': 5 , 'dano_max': 25, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 8 , 'tipo_especial': 'roubo_vida'   , 'especial': 100, 'desc_esp': 'Restaura 100% do dano realizado'           , 'drop_chance': 0.5, 'custo_compra': 5000, 'custo_venda': 1},
             }
 
     @classmethod

@@ -1,7 +1,8 @@
 import os
+import random
 from models.personagem import Personagem
 from models.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU
-from models.inimigos import gerar_inimigo
+from models.inimigos import gerar_inimigo, gerar_primeiro_inimigo
 from utils.mensagens import INICIANDO_RPG, esperar_jogador
 
 def main():
@@ -17,8 +18,9 @@ def main():
     print('Enquanto você estava terminando de se equipar, apareceu um goblin e te atacou.\nBATALHA INICIADA')
     esperar_jogador()
 
-    inimigo_gerado = gerar_inimigo(Player._level)
-    Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'])
+    inimigo_gerado = gerar_primeiro_inimigo()
+    gold_inimigo = random.randint(inimigo_gerado['gold_min'], inimigo_gerado['gold_max'])
+    Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'], gold_inimigo, inimigo_gerado['chefe'])
 
     dados_batalha = BATALHA_CONTINUA
     while dados_batalha == BATALHA_CONTINUA:
