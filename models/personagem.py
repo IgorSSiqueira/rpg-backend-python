@@ -3,7 +3,7 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR
+from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR, RESTAURAR
 from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, escolhas_acao_antes_batalha
 import os
 
@@ -110,22 +110,57 @@ class Personagem:
                     return PROCURAR_INIMIGO
 
                 elif acao_realizada == USAR_MAGIA_ANTES_BATALHA:
-                    opc_magia = retornar_usar_magias(player.MP, player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup, True)
+                    opc_magia = retornar_usar_magias(player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup, True)
                     
                     if opc_magia == '':
                             return ''
                     
+
+                    '''
+                    ESCREVER MENSAGEM DE CURA
+                    '''
+                    
                     if opc_magia == CURA:
                         player.HP += player._magias.cure(player.HPmax, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))
+                        player.MP -= self._magias.custo_mana(CURA)
                         if player.HP > player.HPmax:
                             player.HP = player.HPmax
                     else:
+                        player.MP -= self._magias.custo_mana(RESTAURAR)
                         player.HP = player._magias.restore(player.HPmax)
                     
+                    esperar_jogador()
+                    return ''
+                
+                elif acao_realizada == USAR_ITEM:
+                    pocao_utilizada = self._inventario.verificar_usar_pocao(player.nome, player.HP, player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
+                    if pocao_utilizada == '':
+                        return ''
+                    
+                    self._inventario.usar_pocao(player.nome, pocao_utilizada)
+
+                    if pocao_utilizada == 1 or pocao_utilizada == 2:
+                        print(f'{player.nome} utilizou uma poção de cura, que restaura 30 pontos de HP!')
+                        player.HP += Itens._itens[nome_player][pocao_utilizada]['cura']
+                        if player.HP > player.HPmax:
+                            player.HP = player.HPmax
+
+                        print(f'{player.nome} está agora com {player.HP}/{player.HPmax} pontos de HP!')
+                    else:
+                        print(f'{player.nome} utilizou uma poção de cura, que restaura 80 pontos de HP!\n')
+                        player.MP += Itens._itens[nome_player][pocao_utilizada]['cura']
+                        if player.MP > player.MPmax:
+                            player.MP = player.MPmax
+                        
+                        print(f'{player.nome} está agora com {player.HP}/{player.HPmax} pontos de HP!\n')
+                    
+                    esperar_jogador()
                     return ''
                 
                 elif acao_realizada == OLHAR_INVENTARIO:
-                    print(self._inventario.verificar_armamentos_no_inventario(player.nome))
+                    armamentos_no_inventario = self._inventario.verificar_armamentos_no_inventario(player.nome)
+                    if armamentos_no_inventario == 0:
+                        print('Não possui nenhum equipamento no inventário!')
                     esperar_jogador()
                     return ''
 
@@ -163,18 +198,21 @@ class Personagem:
                 
                 elif acao_turno == USAR_MAGIA:
                     if player.MP > 5:
-                        opc_magia = retornar_usar_magias(player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
+                        opc_magia = retornar_usar_magias(player.HP, player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
                         if opc_magia == '':
                             return ''
                     
                     if opc_magia == FOGO:
+                        player.MP -= self._magias.custo_mana(FOGO)
                         dano_causado_player = self._magias.magia_ataque(opc_magia, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))               
                     else: 
                         if opc_magia == CURA:
                             player.HP += player._magias.cure(player.HPmax, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))
+                            player.MP -= self._magias.custo_mana(CURA)
                             if player.HP > player.HPmax:
                                 player.HP = player.HPmax
                         else:
+                            player.MP -= self._magias.custo_mana(RESTAURAR)
                             player.HP = player._magias.restore(player.HPmax)
 
                 if acao_turno == USAR_ITEM:
@@ -219,34 +257,29 @@ class Personagem:
                             print(f'{inimigo.nome} morreu. Você ganhou {inimigo.XP} de experiência!\n')                 
                             player.XP += inimigo.XP 
 
-                            # *****************************************
-                            # *****************************************
-                            #           DROPS DO INIMIGO ABAIXO
-                            # *****************************************
-                            # *****************************************
-
                             player.gold = inimigo.gold_drop
-                            
-                            if random.randint(1, 100) <= self._inventario._itens[1]['drop_chance']:
-                                print(f'Inimigo dropou {self._inventario._itens[1]['nome']}')
+
+                            if random.randint(1, 100) <= self._inventario._itens[player.nome][1]['drop_chance']:
+                                print(f'Inimigo dropou {self._inventario._itens[player.nome][1]['nome']}')
                                 player._inventario.adicionar_item(player.nome, 1)
-                            
+                                                
                             if inimigo._level > 4:
-                                if random.randint(1, 100) <= self._inventario._itens[2]['drop_chance']:
-                                    print(f'Inimigo dropou {self._inventario._itens[2]['nome']}')
+                                if random.randint(1, 100) <= self._inventario._itens[player.nome][2]['drop_chance']:
+                                    print(f'Inimigo dropou {self._inventario._itens[player.nome][2]['nome']}')
                                     player._inventario.adicionar_item(player.nome, 2)
-
-                            if random.randint(1, 100) <= self._inventario._itens[3]['drop_chance']:
-                                print(f'Inimigo dropou {self._inventario._itens[3]['nome']}')
+                    
+                            if random.randint(1, 100) <= self._inventario._itens[player.nome][3]['drop_chance']:
+                                print(f'Inimigo dropou {self._inventario._itens[player.nome][3]['nome']}')
                                 player._inventario.adicionar_item(player.nome, 3)
-
-                            if random.randint(1, 100) <= (self._inventario._itens[inimigo.cod_arma]['drop_chance'] * 5 if inimigo.is_boss else self._inventario._itens[inimigo.cod_arma]['drop_chance']):
-                                print(f'Inimigo dropou {self._inventario._itens[inimigo.cod_arma]['nome']}')
-                                player._inventario.adicionar_item(player.nome, inimigo.cod_arma)
-
+                    
+                            if random.randint(1, 100) <= (self._inventario._itens[player.nome][inimigo.cod_arma]['drop_chance'] * 5 if inimigo.is_boss else self._inventario._itens[player.nome][inimigo.cod_arma]['drop_chance']):
+                                print(f'Inimigo dropou {self._inventario._itens[player.nome][inimigo.cod_arma]['nome']}')
+                                player._inventario.adicionar_item(player.nome, inimigo.cod_arma)                                                       
+                        
                             if player.XP >= player.XPup:
                                 #PASSOU LEVEL
                                 print(f'Parabéns, você subiu para o level {player._level + 1}\n')
+                                esperar_jogador()
                                 self.passou_level(nome_player)
                                 player.HP = player.HPmax
                                 player.MP = player.MPmax
@@ -254,9 +287,10 @@ class Personagem:
                                 # *****************************************
                                 # VERIFICAR CONTINUAÇÃO
                                 # *****************************************
-                                # *****************************************
-                            
-                            return INIMIGO_MORREU
+                                # *****************************************   
+                                          
+                            esperar_jogador() 
+                            return INIMIGO_MORREU            
 
                         else:
                             print(f'{inimigo.nome} está com {inimigo.HP} pontos de vida!')
@@ -328,7 +362,7 @@ class Personagem:
             if player.nome == nome_personagem:
                 player._level += 1
                 player.XP = 0
-                player.XPup = (30 * player._level * 1.4)
+                player.XPup = int (30 * player._level * 1.4)
 
         self.while_incluir_atributos(nome_personagem, PONTOS_LEVEL_UP)
         self.update_dados(nome_personagem)

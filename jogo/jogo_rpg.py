@@ -39,7 +39,7 @@ def comecar_jogo():
             #CHAMAR FUNÇÃO PARA INICIAR O JOGO NOVAMENTE
 
     while True:
-        dados_batalha = Player.acao_antes_batalha()
+        dados_batalha = Player.acao_antes_batalha(Player.nome)
 
         if dados_batalha == PROCURAR_INIMIGO or dados_batalha == AREA_ANTERIOR or dados_batalha == AREA_PROXIMA:
             inimigo_gerado = gerar_inimigo(Player.area_atual)

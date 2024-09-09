@@ -16,9 +16,9 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
         try:
             if escolher_itens:
                 if qtd_potion > 0 and qtd_hipotion > 0 and qtd_manapotion > 0:
-                    print ('1 - Usar Potion. Restaura 30 pontos de HP\n'
-                           '2 - Usar Hi Potion. Restaura 80 pontos de HP\n'
-                           '3 - Usar Mana Potion. Restaura 50 pontos de MP\n'
+                    print (f'1 - Usar Potion. Restaura 30 pontos de HP (Possui {qtd_potion})\n'
+                           f'2 - Usar Hi Potion. Restaura 80 pontos de HP (Possui {qtd_hipotion})\n'
+                           f'3 - Usar Mana Potion. Restaura 50 pontos de MP (Possui {qtd_manapotion})\n'
                            '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -29,8 +29,8 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                      
                 elif qtd_potion > 0 and qtd_hipotion > 0 and qtd_manapotion <= 0:
-                    print('1 - Usar Potion. Restaura 30 pontos de HP\n'
-                          '2 - Usar Hi Potion. Restaura 80 pontos de HP\n'
+                    print(f'1 - Usar Potion. Restaura 30 pontos de HP (Possui {qtd_potion})\n'
+                          f'2 - Usar Hi Potion. Restaura 80 pontos de HP (Possui {qtd_hipotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))                    
                     if opcao_selecionada == 4:
@@ -42,8 +42,8 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue
                 elif qtd_potion > 0 and qtd_hipotion <= 0 and qtd_manapotion > 0:
-                    print('1 - Usar Potion. Restaura 30 pontos de HP\n'
-                          '3 - Usar Mana Potion. Restaura 50 pontos de MP\n'
+                    print(f'1 - Usar Potion. Restaura 30 pontos de HP (Possui {qtd_potion})\n'
+                          f'3 - Usar Mana Potion. Restaura 50 pontos de MP (Possui {qtd_manapotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))                    
                     if opcao_selecionada == 4:
@@ -55,7 +55,7 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                    
                 elif qtd_potion > 0 and qtd_hipotion <= 0 and qtd_manapotion <= 0:
-                    print('1 - Usar Potion. Restaura 30 pontos de HP\n'
+                    print(f'1 - Usar Potion. Restaura 30 pontos de HP (Possui {qtd_potion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -67,8 +67,8 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                      
                 elif qtd_potion <= 0 and qtd_hipotion > 0 and qtd_manapotion > 0:
-                    print('2 - Usar Hi Potion. Restaura 80 pontos de HP\n'
-                          '3 - Usar Mana Potion. Restaura 50 pontos de MP\n'
+                    print(f'2 - Usar Hi Potion. Restaura 80 pontos de HP (Possui {qtd_hipotion})\n'
+                          f'3 - Usar Mana Potion. Restaura 50 pontos de MP (Possui {qtd_manapotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -80,7 +80,7 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                      
                 elif qtd_potion <= 0 and qtd_hipotion > 0 and qtd_manapotion <= 0:
-                    print('2 - Usar Hi Potion. Restaura 80 pontos de HP\n'
+                    print(f'2 - Usar Hi Potion. Restaura 80 pontos de HP (Possui {qtd_hipotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -91,7 +91,7 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                      
                 else: # qtd_potion <= 0 and qtd_hipotion <= 0 and qtd_manapotion > 0:
-                    print('3 - Usar Mana Potion. Restaura 50 pontos de MP\n'
+                    print(f'3 - Usar Mana Potion. Restaura 50 pontos de MP (Possui {qtd_manapotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -231,7 +231,7 @@ def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, 
                   f'1 - Procurar um inimigo na área atual (área: {area_atual})\n'
                   '2 - Usar uma magia de cura\n'
                   '3 - Usar um item\n'
-                  '4 - Olhar os itens no inventário\n'
+                  '4 - Olhar os equipamentos no inventário\n'
                   '5 - Selecionar equipamento para trocar\n'
                   f'6 - Ir para próxima área e enfrentar um inimigo lá! (área: {area_atual+1})'
                   + mensagem_voltar_area)
