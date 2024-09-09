@@ -32,13 +32,6 @@ enemys = {
 }
 
 def gerar_inimigo(area):
-    # if level_jogador == 1:
-    #     inimigo_criado = 1
-    # elif 2 <= level_jogador <= 5:
-    #     inimigo_criado = random.randint(1, level_jogador)
-    # else:
-    #     inimigo_criado = random.randint(1, level_jogador + 2) if level_jogador <= 18 else random.randint(1, 20)
-
     inimigos_area = [inimigo for inimigo in enemys.values() if inimigo['area'] == area]
         
     return random.choice(inimigos_area)

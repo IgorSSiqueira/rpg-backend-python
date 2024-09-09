@@ -1,5 +1,5 @@
 import msvcrt
-from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURA_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA
+from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA
 import os
 
 #FRASES DE PARTES DO JOGO
@@ -146,13 +146,13 @@ def escolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
     else:
         return USAR_ITEM 
 
-def retornar_usar_magias(mana_player, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up, magia_cura_antes_batalha = False):
+def retornar_usar_magias(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up, magia_cura_antes_batalha = False):
     os.system('cls') 
     print(f'Vida: {hp_atual} / {hp_max}')
     print(f'Mana: {mp_atual} / {mp_max}')
     print(f'XP: {xp_atual} / {xp_level_up}\n')
 
-    if mana_player < 5:
+    if mp_atual < 5:
         print('Não é possível utilizar nenhuma magia com a quantidade de mana atual!')
         esperar_jogador()
         return ''
@@ -163,20 +163,20 @@ def retornar_usar_magias(mana_player, hp_atual, hp_max, mp_atual, mp_max, xp_atu
         return ''
     
     texto_input = 'Escolha a magia que deseja usar\n::: '
-    if mana_player > 70:
+    if mp_atual > 70:
         texto_info = ('Magia(s) disponível!\n'
                       f"{'' if magia_cura_antes_batalha else '1 - Fire\n'}"
                       '2 - Cure\n'
                       '3 - Restore\n'
                       '4 - Voltar')
-        opc = while_acao(texto_info, texto_input, 3)
+        opc = while_acao(texto_info, texto_input, 3, magia_cura_antes_batalha = True)
 
-    elif 20 > mana_player > 70:
+    elif 20 > mp_atual > 70:
         texto_info = ('Magia(s) disponível!\n'
                      f"{'' if magia_cura_antes_batalha else '1 - Fire\n'}"
                      '2 - Cure\n'
                      '4 - Voltar')
-        opc = while_acao(texto_info, texto_input, 2)
+        opc = while_acao(texto_info, texto_input, 2, magia_cura_antes_batalha = True)
     else:
         texto_info = ('Magia(s) disponível!\n'
                      '1 - Fire\n'
@@ -212,7 +212,7 @@ def retornar_usar_pocao(qtd_potion, qtd_hipotion, qtd_manapotion, hp_atual, hp_m
     else:
         return opc
     
-def acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
+def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
     os.system('cls')                
     print(f'Vida: {hp_atual} / {hp_max}')
     print(f'Mana: {mp_atual} / {mp_max}')
@@ -242,7 +242,7 @@ def acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, xp_atual,
     acao = while_acao(texto_info, texto_input, opc_max)
 
     if acao == 1:
-        return PROCURA_INIMIGO
+        return PROCURAR_INIMIGO
     elif acao == 2:
         return USAR_MAGIA_ANTES_BATALHA
     elif acao == 3:

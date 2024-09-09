@@ -3,8 +3,8 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU
-from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, acao_antes_batalha
+from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR
+from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, escolhas_acao_antes_batalha
 import os
 
 class Personagem:
@@ -104,7 +104,45 @@ class Personagem:
     def acao_antes_batalha(self, nome_player):
         for player in Personagem.personagens:
             if player.nome == nome_player: 
-                acao_realizada = acao_antes_batalha(player.area_atual, player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
+                acao_realizada = escolhas_acao_antes_batalha(player.area_atual, player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
+
+                if acao_realizada == PROCURAR_INIMIGO:
+                    return PROCURAR_INIMIGO
+
+                elif acao_realizada == USAR_MAGIA_ANTES_BATALHA:
+                    opc_magia = retornar_usar_magias(player.MP, player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup, True)
+                    
+                    if opc_magia == '':
+                            return ''
+                    
+                    if opc_magia == CURA:
+                        player.HP += player._magias.cure(player.HPmax, self._atributos.retornar_atributo(nome_player, INTELIGENCIA))
+                        if player.HP > player.HPmax:
+                            player.HP = player.HPmax
+                    else:
+                        player.HP = player._magias.restore(player.HPmax)
+                    
+                    return ''
+                
+                elif acao_realizada == OLHAR_INVENTARIO:
+                    print(self._inventario.verificar_armamentos_no_inventario(player.nome))
+                    esperar_jogador()
+                    return ''
+
+                elif acao_realizada == TROCAR_EQUIPAMENTO:
+                    self._inventario.verificar_armamentos_no_inventario(player.nome, True)
+                    return ''
+
+                elif acao_realizada == AREA_PROXIMA:
+                    player.area_atual += 1
+                    return AREA_PROXIMA
+                    
+
+                elif acao_realizada == AREA_ANTERIOR:
+                    player.area_atual -= 1
+                    return AREA_ANTERIOR
+
+                
                 
 
     def acao_turno(self, nome_player, nome_inimigo):  
@@ -125,7 +163,7 @@ class Personagem:
                 
                 elif acao_turno == USAR_MAGIA:
                     if player.MP > 5:
-                        opc_magia = retornar_usar_magias(player.MP, player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
+                        opc_magia = retornar_usar_magias(player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup)
                         if opc_magia == '':
                             return ''
                     
