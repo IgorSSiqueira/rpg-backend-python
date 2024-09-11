@@ -1,4 +1,5 @@
 import os
+import sys
 import random
 from models.personagem import Personagem
 from utils.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU, PROCURAR_INIMIGO, AREA_ANTERIOR, AREA_PROXIMA
@@ -36,7 +37,8 @@ def comecar_jogo():
         elif dados_batalha == PLAYER_MORREU:
             print('GAME OVER')
             esperar_jogador()
-            #CHAMAR FUNÇÃO PARA INICIAR O JOGO NOVAMENTE
+            sys.exit()
+            #CHAMAR FUNÇÃO PARA INICIAR O JOGO NOVAMENTE OU FECHAR O JOGO
 
     while True:
         dados_batalha = Player.acao_antes_batalha(Player.nome)
@@ -46,6 +48,8 @@ def comecar_jogo():
             gold_inimigo = random.randint(inimigo_gerado['gold_min'], inimigo_gerado['gold_max'])
             Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'], gold_inimigo, inimigo_gerado['chefe'])
 
+            print(f'Um {Inimigo.nome} te atacou. Batalha iniciada!')
+            esperar_jogador()
             dados_turno = BATALHA_CONTINUA
             while dados_turno == BATALHA_CONTINUA:
                 dados_turno = Player.acao_turno(Player.nome, Inimigo.nome)
@@ -58,15 +62,11 @@ def comecar_jogo():
                 elif dados_turno == PLAYER_MORREU:
                     print('GAME OVER')
                     esperar_jogador()
-                    #CHAMAR FUNÇÃO PARA INICIAR O JOGO NOVAMENTE
+                    #CHAMAR FUNÇÃO PARA INICIAR O JOGO NOVAMENTE OU FECHAR O JOGO
+                    sys.exit()
+                    
             
             continue
         
         elif dados_batalha == '':
             continue
-
-        
-
-
-
-

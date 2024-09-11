@@ -1,5 +1,6 @@
 from models.itens import Itens
-from utils.constantes import ARMA, ESCUDO
+from models.atributos import Atributos
+from utils.constantes import ARMA, ESCUDO, FORCA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, ADICIONAR
 
 class Equipamentos:
     _equipados = {}
@@ -16,11 +17,28 @@ class Equipamentos:
     def equipar_item(nome_personagem, cod, espaco):
         Equipamentos._equipados[nome_personagem][espaco] = Itens._itens[nome_personagem][cod]
         Itens.remover_item(nome_personagem, cod, 1)
+
+        if Itens._itens[nome_personagem][cod]['tipo_bonus'] == 'str':
+            Atributos.adicionar_remover_ponto_atributo(Atributos, nome_personagem, FORCA_EQUIPAMENTO, ADICIONAR, Itens._itens[nome_personagem][cod]['bonus'])
+        elif Itens._itens[nome_personagem][cod]['tipo_bonus'] == 'int':
+            Atributos.adicionar_remover_ponto_atributo(Atributos, nome_personagem, INTELIGENCIA_EQUIPAMENTO, ADICIONAR, Itens._itens[nome_personagem][cod]['bonus'])
+        else:
+            Atributos.adicionar_remover_ponto_atributo(Atributos, nome_personagem, DEFESA_EQUIPAMENTO, ADICIONAR, Itens._itens[nome_personagem][cod]['bonus'])
+
         print(f'{Itens._itens[nome_personagem][cod]['nome']} equipado(a)!')
     
     def desequipar_item(nome_personagem, espaco):
-        Itens.adicionar_item(nome_personagem, Equipamentos._equipados[nome_personagem][espaco]['cod'], 1)
+        cod_equipamento = Equipamentos._equipados[nome_personagem][espaco]['cod']
+        Itens.adicionar_item(nome_personagem, cod_equipamento, 1)
         Equipamentos._equipados[nome_personagem][espaco] = {}
+
+        if Itens._itens[nome_personagem][cod_equipamento]['tipo_bonus'] == 'str':
+            Atributos.zerar_atributo_equipamento(Atributos, nome_personagem, FORCA_EQUIPAMENTO)
+        elif Itens._itens[nome_personagem][cod_equipamento]['tipo_bonus'] == 'int':
+            Atributos.zerar_atributo_equipamento(Atributos, nome_personagem, INTELIGENCIA_EQUIPAMENTO)
+        else:
+            Atributos.zerar_atributo_equipamento(Atributos, nome_personagem, DEFESA_EQUIPAMENTO)
+
         print(f'{espaco} desequipado(a)!')
 
     def while_escolha(texto, nome_personagem, pergunta = False):

@@ -1,6 +1,7 @@
 import msvcrt
-from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA
+from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA, VERIFICAR_ATRIBUTOS, POTION, HIPOTION, MANAPOTION
 import os
+
 
 #FRASES DE PARTES DO JOGO
 INICIANDO_RPG = ('**********************\n'+'Iniciando Jogo de RPG\n'+'**********************\n')
@@ -11,14 +12,14 @@ def esperar_jogador():
 
 
 
-def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolher_itens = False, qtd_potion = 0, qtd_hipotion = 0, qtd_manapotion = 0, magia_cura_antes_batalha = False):
+def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolher_itens = False, qtd_potion = 0, qtd_hipotion = 0, qtd_manapotion = 0, magia_cura_antes_batalha_while = False, nome_personagem = ''):
     while True:
         try:
             if escolher_itens:
                 if qtd_potion > 0 and qtd_hipotion > 0 and qtd_manapotion > 0:
-                    print (f'1 - Usar Potion. Restaura 30 pontos de HP (Possui {qtd_potion})\n'
-                           f'2 - Usar Hi Potion. Restaura 80 pontos de HP (Possui {qtd_hipotion})\n'
-                           f'3 - Usar Mana Potion. Restaura 50 pontos de MP (Possui {qtd_manapotion})\n'
+                    print (f'1 - Usar Potion. Restaura {POTION} pontos de HP (Possui {qtd_potion})\n'
+                           f'2 - Usar Hi Potion. Restaura {HIPOTION} pontos de HP (Possui {qtd_hipotion})\n'
+                           f'3 - Usar Mana Potion. Restaura {MANAPOTION} pontos de MP (Possui {qtd_manapotion})\n'
                            '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -29,8 +30,8 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                      
                 elif qtd_potion > 0 and qtd_hipotion > 0 and qtd_manapotion <= 0:
-                    print(f'1 - Usar Potion. Restaura 30 pontos de HP (Possui {qtd_potion})\n'
-                          f'2 - Usar Hi Potion. Restaura 80 pontos de HP (Possui {qtd_hipotion})\n'
+                    print(f'1 - Usar Potion. Restaura {POTION} pontos de HP (Possui {qtd_potion})\n'
+                          f'2 - Usar Hi Potion. Restaura {HIPOTION} pontos de HP (Possui {qtd_hipotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))                    
                     if opcao_selecionada == 4:
@@ -42,8 +43,8 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue
                 elif qtd_potion > 0 and qtd_hipotion <= 0 and qtd_manapotion > 0:
-                    print(f'1 - Usar Potion. Restaura 30 pontos de HP (Possui {qtd_potion})\n'
-                          f'3 - Usar Mana Potion. Restaura 50 pontos de MP (Possui {qtd_manapotion})\n'
+                    print(f'1 - Usar Potion. Restaura {POTION} pontos de HP (Possui {qtd_potion})\n'
+                          f'3 - Usar Mana Potion. Restaura {MANAPOTION} pontos de MP (Possui {qtd_manapotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))                    
                     if opcao_selecionada == 4:
@@ -55,7 +56,7 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                    
                 elif qtd_potion > 0 and qtd_hipotion <= 0 and qtd_manapotion <= 0:
-                    print(f'1 - Usar Potion. Restaura 30 pontos de HP (Possui {qtd_potion})\n'
+                    print(f'1 - Usar Potion. Restaura {POTION} pontos de HP (Possui {qtd_potion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -67,8 +68,8 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                      
                 elif qtd_potion <= 0 and qtd_hipotion > 0 and qtd_manapotion > 0:
-                    print(f'2 - Usar Hi Potion. Restaura 80 pontos de HP (Possui {qtd_hipotion})\n'
-                          f'3 - Usar Mana Potion. Restaura 50 pontos de MP (Possui {qtd_manapotion})\n'
+                    print(f'2 - Usar Hi Potion. Restaura {HIPOTION} pontos de HP (Possui {qtd_hipotion})\n'
+                          f'3 - Usar Mana Potion. Restaura {MANAPOTION} pontos de MP (Possui {qtd_manapotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -80,7 +81,7 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                      
                 elif qtd_potion <= 0 and qtd_hipotion > 0 and qtd_manapotion <= 0:
-                    print(f'2 - Usar Hi Potion. Restaura 80 pontos de HP (Possui {qtd_hipotion})\n'
+                    print(f'2 - Usar Hi Potion. Restaura {HIPOTION} pontos de HP (Possui {qtd_hipotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -91,7 +92,7 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                         print('Opção inválida!\n')
                         continue                      
                 else: # qtd_potion <= 0 and qtd_hipotion <= 0 and qtd_manapotion > 0:
-                    print(f'3 - Usar Mana Potion. Restaura 50 pontos de MP (Possui {qtd_manapotion})\n'
+                    print(f'3 - Usar Mana Potion. Restaura {MANAPOTION} pontos de MP (Possui {qtd_manapotion})\n'
                           '4 - Voltar')
                     opcao_selecionada = int(input(texto_input))
                     if opcao_selecionada == 4:
@@ -106,7 +107,7 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
                 opcao_selecionada = int(input(texto_input))                
                 if opcao_selecionada == 4 and not acao_inicial:
                     break
-                elif magia_cura_antes_batalha:
+                elif magia_cura_antes_batalha_while:
                     if 1 < opcao_selecionada <= nro_maximo:
                         break
                     else:
@@ -125,11 +126,11 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
     return opcao_selecionada
 
 
-def escolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
+def escolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up, nome_inimigo, hp_inimigo, player_level, inimigo_level, player_gold):
     os.system('cls')                
-    print(f'Vida: {hp_atual} / {hp_max}')
-    print(f'Mana: {mp_atual} / {mp_max}')
-    print(f'XP: {xp_atual} / {xp_level_up}\n')
+    print(f'Vida: {hp_atual} / {hp_max} - Mana: {mp_atual} / {mp_max} --------- Gold: {player_gold}')
+    print(f'Level: {player_level} ---- XP: {xp_atual} / {xp_level_up}\n')
+    print(f'{nome_inimigo} - HP: {hp_inimigo} ---- Level: {inimigo_level}\n')
 
     texto_info = ('Possíveis ações:\n'
                   '1 - Atacar o inimigo\n'
@@ -146,11 +147,10 @@ def escolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
     else:
         return USAR_ITEM 
 
-def retornar_usar_magias(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up, magia_cura_antes_batalha = False):
+def retornar_usar_magias(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up, player_level, player_gold, magia_cura_antes_batalha = False):
     os.system('cls') 
-    print(f'Vida: {hp_atual} / {hp_max}')
-    print(f'Mana: {mp_atual} / {mp_max}')
-    print(f'XP: {xp_atual} / {xp_level_up}\n')
+    print(f'Vida: {hp_atual} / {hp_max} - Mana: {mp_atual} / {mp_max} --------- Gold: {player_gold}')
+    print(f'Level: {player_level} ---- XP: {xp_atual} / {xp_level_up}\n')
 
     if mp_atual < 5:
         print('Não é possível utilizar nenhuma magia com a quantidade de mana atual!')
@@ -169,14 +169,14 @@ def retornar_usar_magias(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_
                       '2 - Cure\n'
                       '3 - Restore\n'
                       '4 - Voltar')
-        opc = while_acao(texto_info, texto_input, 3, magia_cura_antes_batalha = True)
+        opc = while_acao(texto_info, texto_input, 3, magia_cura_antes_batalha_while = magia_cura_antes_batalha)
 
-    elif 20 > mp_atual > 70:
+    elif 20 > mp_atual < 70:
         texto_info = ('Magia(s) disponível!\n'
                      f"{'' if magia_cura_antes_batalha else '1 - Fire\n'}"
                      '2 - Cure\n'
                      '4 - Voltar')
-        opc = while_acao(texto_info, texto_input, 2, magia_cura_antes_batalha = True)
+        opc = while_acao(texto_info, texto_input, 2, magia_cura_antes_batalha_while = magia_cura_antes_batalha)
     else:
         texto_info = ('Magia(s) disponível!\n'
                      '1 - Fire\n'
@@ -193,7 +193,7 @@ def retornar_usar_magias(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_
         return ''
 
 
-def retornar_usar_pocao(qtd_potion, qtd_hipotion, qtd_manapotion, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
+def retornar_usar_pocao(nome_personagem, qtd_potion, qtd_hipotion, qtd_manapotion, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
     os.system('cls') 
     print(f'Vida: {hp_atual} / {hp_max}')
     print(f'Mana: {mp_atual} / {mp_max}')
@@ -205,27 +205,26 @@ def retornar_usar_pocao(qtd_potion, qtd_hipotion, qtd_manapotion, hp_atual, hp_m
         return ''
     
     texto_input = 'Selecione qual item deseta usar!\n'
-    opc = while_acao('', texto_input, 0, False, True, qtd_potion, qtd_hipotion, qtd_manapotion)
+    opc = while_acao('', texto_input, 0, False, True, qtd_potion, qtd_hipotion, qtd_manapotion, False, nome_personagem)
     
     if opc == 4:
         return ''
     else:
         return opc
     
-def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up):
+def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up, player_level, player_gold):
     os.system('cls')                
-    print(f'Vida: {hp_atual} / {hp_max}')
-    print(f'Mana: {mp_atual} / {mp_max}')
-    print(f'XP: {xp_atual} / {xp_level_up}\n')
+    print(f'Vida: {hp_atual} / {hp_max} ---- Mana: {mp_atual} / {mp_max} --------- Gold: {player_gold}')
+    print(f'Level: {player_level} ---- XP: {xp_atual} / {xp_level_up}\n')
 
     print('Selecione abaixo qual opção você deseja!\n'
           'Cuidado ao passar para a próxima área, fazendo isso você entrará diretamente em uma batalha!\n')
 
-    opc_max = 6
+    opc_max = 7
     mensagem_voltar_area = ''
     if area_atual > 1:
-        opc_max = 7
-        mensagem_voltar_area = f'\n7 - Ir para área anterior e enfrentar um inimigo lá! (área: {area_atual+1})'
+        opc_max = 8
+        mensagem_voltar_area = f'\n8 - Ir para área anterior e enfrentar um inimigo lá! (área: {area_atual-1})'
 
     texto_info = ('Possíveis ações:\n'
                   f'1 - Procurar um inimigo na área atual (área: {area_atual})\n'
@@ -233,7 +232,8 @@ def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, 
                   '3 - Usar um item\n'
                   '4 - Olhar os equipamentos no inventário\n'
                   '5 - Selecionar equipamento para trocar\n'
-                  f'6 - Ir para próxima área e enfrentar um inimigo lá! (área: {area_atual+1})'
+                  '6 - Verificar atributos\n'
+                  f'7 - Ir para próxima área e enfrentar um inimigo lá! (área: {area_atual+1})'
                   + mensagem_voltar_area)
                   #9 - SALVAR O JOGO
 
@@ -252,8 +252,10 @@ def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, 
     elif acao == 5:
         return TROCAR_EQUIPAMENTO
     elif acao == 6:
-        return AREA_PROXIMA
+        return VERIFICAR_ATRIBUTOS
     elif acao == 7:
+        return AREA_PROXIMA
+    elif acao == 8:
         AREA_ANTERIOR
     
 

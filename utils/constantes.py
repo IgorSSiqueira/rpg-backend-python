@@ -1,12 +1,15 @@
 #QTD PONTOS DE ATRIBUTO
-QTD_PONTOS_ATRIBUTOS = 3
-PONTOS_LEVEL_UP = 1
+QTD_PONTOS_ATRIBUTOS = 5
+PONTOS_LEVEL_UP = 2
 
 #ATRIBUTOS
 VITALIDADE = 'vitalidade'
 FORCA = 'forca'
 INTELIGENCIA = 'inteligencia'
 DEFESA = 'defesa'
+FORCA_EQUIPAMENTO = 'forca_equipamento'
+INTELIGENCIA_EQUIPAMENTO = 'inteligencia_equipamento'
+DEFESA_EQUIPAMENTO = 'defesa_equipamento'
 
 #SLOTS DE ARMAMENTO
 ARMA = 'arma'
@@ -20,6 +23,7 @@ PROCURAR_INIMIGO = 'nova_batalha'
 USAR_MAGIA_ANTES_BATALHA = True
 OLHAR_INVENTARIO = 'inventario'
 TROCAR_EQUIPAMENTO = 'equip'
+VERIFICAR_ATRIBUTOS = 'atributos'
 AREA_PROXIMA = 'area_proxima'
 AREA_ANTERIOR = 'area_anterior'
 
@@ -37,3 +41,8 @@ REMOVER = False
 INIMIGO_MORREU = 'inimigo_morreu'
 PLAYER_MORREU = 'game_over'
 BATALHA_CONTINUA = 'batalha_continua'
+
+#RESTAURACAO POÇÕES
+POTION = 100
+HIPOTION = 250
+MANAPOTION = 80
