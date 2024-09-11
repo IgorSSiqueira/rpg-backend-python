@@ -14,8 +14,8 @@ class Itens:
                 3:  {'cod': 3 , 'nome': 'Mana Potion'       , 'quantidade': 0, 'cura': MANAPOTION, 'drop_chance': 8 , 'custo_compra': 150, 'custo_venda': 40},
  
                 4:  {'cod': 4 , 'nome': 'Espada Inicial'    , 'quantidade': 0, 'dano_min': 20, 'dano_max': 60 , 'maos': 1, 'tipo_bonus': 'str', 'bonus': 10 , 'drop_chance': 7 , 'custo_compra': 100, 'custo_venda': 10},
-                5:  {'cod': 5 , 'nome': 'Cetro Inicial'     , 'quantidade': 0, 'dano_min': 5 , 'dano_max': 8  , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 15, 'drop_chance': 7 , 'custo_compra': 100, 'custo_venda': 10},
-                6:  {'cod': 6 , 'nome': 'Escudo Básico'     , 'quantidade': 0, 'dano_min': 0 , 'dano_max': 0  , 'maos': 1, 'tipo_bonus': 'def', 'bonus': 5 , 'drop_chance': 13, 'custo_compra': 300, 'custo_venda': 50},
+                5:  {'cod': 5 , 'nome': 'Cetro Inicial'     , 'quantidade': 0, 'dano_min': 5 , 'dano_max': 8  , 'maos': 1, 'tipo_bonus': 'int', 'bonus': 15, 'drop_chance': 7 , 'custo_compra': 100, 'custo_venda': 10},
+                6:  {'cod': 6 , 'nome': 'Escudo Básico'     , 'quantidade': 0, 'dano_min': 0 , 'dano_max': 0  , 'maos': 1, 'tipo_bonus': 'def', 'bonus': 8 , 'drop_chance': 13, 'custo_compra': 300, 'custo_venda': 50},
                 7:  {'cod': 7 , 'nome': 'Espada Longa'      , 'quantidade': 0, 'dano_min': 40, 'dano_max': 120, 'maos': 2, 'tipo_bonus': 'str', 'bonus': 40, 'drop_chance': 5 , 'custo_compra': 800, 'custo_venda': 240},
                 8:  {'cod': 8 , 'nome': 'Cetro Médio'       , 'quantidade': 0, 'dano_min': 10, 'dano_max': 15 , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 28, 'drop_chance': 5 , 'custo_compra': 800, 'custo_venda': 240},
 
@@ -69,12 +69,17 @@ class Itens:
                                     + f" - Bônus: {espada_longa['tipo_bonus']} + {espada_longa['bonus']} - ({espada_longa['maos']} mão)")
 
                 if equip_char[8].get('quantidade', 0) > 0: 
-                    cetro_magico = cls._itens[nome_personagem][8]
+                    cetro_medio = cls._itens[nome_personagem][8]
+                    armamentos.append(f"{cetro_medio['nome']}: qtd: {cetro_medio['quantidade']} - Dano {cetro_medio['dano_min']} - {cetro_medio['dano_max']}"
+                                    + f" - Bônus: {cetro_medio['tipo_bonus']} + {cetro_medio['bonus']} - ({cetro_medio['maos']} mão)")
+
+                if equip_char[9].get('quantidade', 0) > 0: 
+                    cetro_magico = cls._itens[nome_personagem][9]
                     armamentos.append(f"{cetro_magico['nome']}: qtd: {cetro_magico['quantidade']} - Dano {cetro_magico['dano_min']} - {cetro_magico['dano_max']}"
                                     + f" - Bônus: {cetro_magico['tipo_bonus']} + {cetro_magico['bonus']} - {cetro_magico['desc_esp']} - ({cetro_magico['maos']} mão)")
 
-                if equip_char[9].get('quantidade', 0) > 0: 
-                    espada_vamp = cls._itens[nome_personagem][9]
+                if equip_char[10].get('quantidade', 0) > 0: 
+                    espada_vamp = cls._itens[nome_personagem][10]
                     armamentos.append(f"{espada_vamp['nome']}: qtd: {espada_vamp['quantidade']} - Dano {espada_vamp['dano_min']} - {espada_vamp['dano_max']}"
                                     + f" - Bônus: {espada_vamp['tipo_bonus']} + {espada_vamp['bonus']} - {espada_vamp['desc_esp']} - ({espada_vamp['maos']} mão)")
             else:
@@ -99,12 +104,17 @@ class Itens:
                                     + f" - Bônus: {espada_longa['tipo_bonus']} + {espada_longa['bonus']} - ({espada_longa['maos']} mão)")
 
                 if equip_char[8].get('quantidade', 0) > 0: 
-                    cetro_magico = cls._itens[nome_personagem][8]
+                    cetro_medio = cls._itens[nome_personagem][8]
+                    armamentos.append(f"Opção {cetro_medio['cod']} -> {cetro_medio['nome']}: Dano {cetro_medio['dano_min']} - {cetro_medio['dano_max']}"
+                                    + f" - Bônus: {cetro_medio['tipo_bonus']} + {cetro_medio['bonus']} - ({cetro_medio['maos']} mão)")
+
+                if equip_char[9].get('quantidade', 0) > 0: 
+                    cetro_magico = cls._itens[nome_personagem][9]
                     armamentos.append(f"Opção {cetro_magico['cod']} -> {cetro_magico['nome']}: Dano {cetro_magico['dano_min']} - {cetro_magico['dano_max']}"
                                     + f" - Bônus: {cetro_magico['tipo_bonus']} + {cetro_magico['bonus']} - {cetro_magico['desc_esp']} - ({cetro_magico['maos']} mão)")
 
-                if equip_char[9].get('quantidade', 0) > 0: 
-                    espada_vamp = cls._itens[nome_personagem][9]
+                if equip_char[10].get('quantidade', 0) > 0: 
+                    espada_vamp = cls._itens[nome_personagem][10]
                     armamentos.append(f"Opção {espada_vamp['cod']} -> {espada_vamp['nome']}:Dano {espada_vamp['dano_min']} - {espada_vamp['dano_max']}"
                                     + f" - Bônus: {espada_vamp['tipo_bonus']} + {espada_vamp['bonus']} - {espada_vamp['desc_esp']} - ({espada_vamp['maos']} mão)")
 

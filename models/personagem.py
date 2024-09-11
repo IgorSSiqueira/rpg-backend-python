@@ -3,14 +3,14 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR, RESTAURAR, VERIFICAR_ATRIBUTOS, FORCA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO
+from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR, RESTAURAR, VERIFICAR_ATRIBUTOS, FORCA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, ADICIONAR, GUERREIRO, MAGO
 from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, escolhas_acao_antes_batalha
 import os
 
 class Personagem:
     personagens = []
 
-    def __init__(self, nome, player:bool, level = 1, cod_arma_inimigo = 4, gold_drop = 0, is_boss = False):
+    def __init__(self, nome, player:bool, level = 1, cod_arma_inimigo = 4, gold_drop = 0, is_boss = False, cod_drop = 0, classe = ''):
         self._nome = nome 
         self._player = player   
         
@@ -24,20 +24,23 @@ class Personagem:
             self.XPup = 30
             self.gold = 0
             self.area_atual = 1
+            self.classe = classe
             self._magias = Magias()
             self._equipamentos = Equipamentos(nome)
             self._inventario = Itens(nome)  
             self._atributos = Atributos(nome)   
         else:
             self._level = level
-            self.HPmax = int(((60 * level) * 2.2) if is_boss else (60 * level))
-            self.HP = int(self.HPmax)
-            self.XP = int((20 + (20 * round(level * 1.8))) * 1.5) if is_boss else int((10 + (10 * round(level * 1.2))) * 1.5)
-            self.dano_base = (random.randint(level, (level * 7)) * 4) if is_boss else (random.randint(level, (level * 7)))
-            self.defesa_base = (random.randint(level, (level * 4)) * 1.5) if is_boss else (random.randint(level, (level * 4)))
+            self.HPmax = int(((60 * level) * 2.5) if is_boss else (60 * level))
+            self.HP = self.HPmax
+            # self.XP = int((20 + (20 * round(level * 1.8))) * 1.5) if is_boss else int((10 + (10 * round(level * 1.2))) * 1.5)
+            self.XP = int((20 + (20 * round(level * 1.8))) * 8) if is_boss else int((10 + (10 * round(level * 1.2))) * 8)
+            self.dano_base = (random.randint(level, (level * 7)) * 3) if is_boss else (random.randint(level, (level * 7)))
+            self.defesa_base = (int(random.randint(level, (level * 4)) * 1.5)) if is_boss else (random.randint(level, (level * 4)))
             self.cod_arma = cod_arma_inimigo
             self.gold_drop = gold_drop
             self.is_boss = is_boss
+            self.cod_drop = cod_drop
 
         Personagem.personagens.append(self)
 
@@ -72,8 +75,12 @@ class Personagem:
 
     def iniciar_rpg(self, nome_personagem):       
         print(f'Olá {nome_personagem}, seja bem vindo!!')
-        esperar_jogador()
+        esperar_jogador()    
+        
+        input('Selecione agora a sua classe!\n1 - Guerreiro\n2 - Mago\n:::')
+
         self.while_incluir_atributos(nome_personagem, QTD_PONTOS_ATRIBUTOS)        
+        
 
         espada_ini = self._inventario._itens[nome_personagem][4]
         cetro_ini = self._inventario._itens[nome_personagem][5]
@@ -111,7 +118,7 @@ class Personagem:
                     return PROCURAR_INIMIGO
 
                 elif acao_realizada == USAR_MAGIA_ANTES_BATALHA:
-                    opc_magia = retornar_usar_magias(player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup, player._level, player.gold, True)
+                    opc_magia = retornar_usar_magias(player.HP, player.HPmax, player.MP, player.MPmax, player.XP, player.XPup, player._level, player.gold, True)
                     
                     if opc_magia == '':
                             return ''
@@ -161,6 +168,8 @@ class Personagem:
                     armamentos_no_inventario = self._inventario.verificar_armamentos_no_inventario(player.nome)
                     if armamentos_no_inventario == 0:
                         print('Não possui nenhum equipamento no inventário!')
+                    
+                    print(armamentos_no_inventario)
                     esperar_jogador()
                     return ''
 
@@ -169,7 +178,7 @@ class Personagem:
                     if trocar_equipamento == 0:
                         print('Não possui nenhum equipamento no inventário!')
                     else:
-                        self.equipar(player)
+                        self.equipar(player.nome)
                     esperar_jogador()
                     return ''
                 
@@ -290,16 +299,12 @@ class Personagem:
                                 print(f'Inimigo dropou {self._inventario._itens[player.nome][3]['nome']}')
                                 player._inventario.adicionar_item(player.nome, 3)
                     
-                            if random.randint(1, 100) <= (self._inventario._itens[player.nome][inimigo.cod_arma]['drop_chance'] * 5 if inimigo.is_boss else self._inventario._itens[player.nome][inimigo.cod_arma]['drop_chance']):
-                                print(f'Inimigo dropou {self._inventario._itens[player.nome][inimigo.cod_arma]['nome']}')
-                                player._inventario.adicionar_item(player.nome, inimigo.cod_arma)                                                       
+                            if random.randint(1, 100) <= (self._inventario._itens[player.nome][inimigo.cod_drop]['drop_chance'] * 5 if inimigo.is_boss else self._inventario._itens[player.nome][inimigo.cod_drop]['drop_chance']):
+                                print(f'Inimigo dropou {self._inventario._itens[player.nome][inimigo.cod_drop]['nome']}')
+                                player._inventario.adicionar_item(player.nome, inimigo.cod_drop)                                                       
                         
                             if player.XP >= player.XPup:
-                                print(f'Parabéns, você subiu para o level {player._level + 1}\n')
-                                esperar_jogador()
-                                XPRestante = player.XP - player.XPup
-                                self.passou_level(nome_player)
-                                player.XP = XPRestante
+                                self.passou_level(nome_player)                                
 
                                 # *****************************************
                                 # *****************************************
@@ -348,8 +353,15 @@ class Personagem:
 
         for personagem in self.personagens:
             if personagem.nome == nome_personagem:
-                personagem.HPmax = 100 + (personagem._level * 15) + (str * 5) + (vit * 20)
-                personagem.MPmax = 80 + (personagem._level * 10) + (int * 10)
+
+                if personagem.classe == GUERREIRO:
+                    personagem.HPmax = 120 + (str * 5) + (vit * 20)
+                    personagem.MPmax = 70 + (int * 5)
+                
+                elif personagem.classe == MAGO:
+                    personagem.HPmax = 100 + (str * 2) + (vit * 10)
+                    personagem.MPmax = 90 + (int * 10)
+
                 personagem.HP = personagem.HPmax
                 personagem.MP = personagem.MPmax
                 
@@ -362,12 +374,26 @@ class Personagem:
     def passou_level(self, nome_personagem):
         for player in Personagem.personagens:
             if player.nome == nome_personagem:
+                print(f'Parabéns, você subiu para o level {player._level + 1}\n')
+                esperar_jogador()
+                XPRestante = player.XP - player.XPup
                 player._level += 1
                 player.XP = 0
                 player.XPup = int (30 * player._level * 1.4)
 
-        self.while_incluir_atributos(nome_personagem, PONTOS_LEVEL_UP)
-        self.update_dados(nome_personagem)
+                self._atributos.adicionar_remover_ponto_atributo(player.nome, FORCA, ADICIONAR)
+                self._atributos.adicionar_remover_ponto_atributo(player.nome, INTELIGENCIA, ADICIONAR)
+                self._atributos.adicionar_remover_ponto_atributo(player.nome, DEFESA, ADICIONAR)
+                self._atributos.adicionar_remover_ponto_atributo(player.nome, VITALIDADE, ADICIONAR)
+                
+                self.while_incluir_atributos(nome_personagem, PONTOS_LEVEL_UP)
+                self.update_dados(nome_personagem)
+
+                player.XP = XPRestante
+                if player.XP >= player.XPup:
+                    self.passou_level(player.nome)
+                    
+        
 
     def adicionar_remover_atributos_equipamentos(self, nome_personagem, arma_escudo, adicionar_remover = bool):    
         for personagem in self.personagens:

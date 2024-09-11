@@ -1,5 +1,5 @@
 import msvcrt
-from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA, VERIFICAR_ATRIBUTOS, POTION, HIPOTION, MANAPOTION
+from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA, VERIFICAR_ATRIBUTOS, POTION, HIPOTION, MANAPOTION, GUERREIRO, MAGO
 import os
 
 
@@ -125,6 +125,21 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
    
     return opcao_selecionada
 
+def escolher_classe():
+    os.system('cls')
+    texto_info = ('Escolha a sua classe, entre guerreiro e mago\n'
+                 +'O guerreiro começa com 120 pontos de HP, cada ponto de STR almenta 5 ponto de HP e cada ponto em VIT almenta 20 pontos de HP!'
+                 +'Porém começa com 70 pontos de MP, cada ponto de INT almenta 5 ponto de MP!'
+                 +'O mago começa com 100 pontos de HP, cada ponto de STR almenta 2 ponto de HP e cada ponto em VIT almenta 10 pontos de HP!'
+                 +'Porém começa com 90 pontos de MP, cada ponto de INT almenta 10 ponto de MP!')
+    texto_input = 'Selecione a classe desejada!\n1 - Guerreiro\n2 - Mago\n::: '
+
+    escolha = while_acao(texto_info, texto_input, 2, True)
+
+    if escolha == 1:
+        return GUERREIRO
+    else:
+        return MAGO
 
 def escolher_acao(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_up, nome_inimigo, hp_inimigo, player_level, inimigo_level, player_gold):
     os.system('cls')                
@@ -171,7 +186,7 @@ def retornar_usar_magias(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_
                       '4 - Voltar')
         opc = while_acao(texto_info, texto_input, 3, magia_cura_antes_batalha_while = magia_cura_antes_batalha)
 
-    elif 20 > mp_atual < 70:
+    elif 20 < mp_atual < 70:
         texto_info = ('Magia(s) disponível!\n'
                      f"{'' if magia_cura_antes_batalha else '1 - Fire\n'}"
                      '2 - Cure\n'
@@ -256,7 +271,7 @@ def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, 
     elif acao == 7:
         return AREA_PROXIMA
     elif acao == 8:
-        AREA_ANTERIOR
+        return AREA_ANTERIOR
     
 
     # acao = while_antes_batalha(texto_info, texto_input, 3, True)

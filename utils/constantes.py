@@ -2,6 +2,10 @@
 QTD_PONTOS_ATRIBUTOS = 5
 PONTOS_LEVEL_UP = 2
 
+# CLASSES
+GUERREIRO = 'guerreiro'
+MAGO = 'mago'
+
 #ATRIBUTOS
 VITALIDADE = 'vitalidade'
 FORCA = 'forca'

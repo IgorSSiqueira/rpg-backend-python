@@ -4,15 +4,16 @@ import random
 from models.personagem import Personagem
 from utils.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU, PROCURAR_INIMIGO, AREA_ANTERIOR, AREA_PROXIMA
 from models.inimigos import gerar_inimigo, gerar_primeiro_inimigo
-from utils.mensagens import INICIANDO_RPG, esperar_jogador
+from utils.mensagens import INICIANDO_RPG, esperar_jogador, escolher_classe
 
 def comecar_jogo():
     os.system('cls')
     print(INICIANDO_RPG)
     
     nome_jogador = input('Digite o nome do seu personagem: ')
+    classe = escolher_classe()
 
-    Player = Personagem(nome_jogador, True)
+    Player = Personagem(nome_jogador, True, classe = classe)
     Player.iniciar_rpg(Player.nome)
 
     os.system('cls')
@@ -20,7 +21,7 @@ def comecar_jogo():
     esperar_jogador()
     inimigo_gerado = gerar_primeiro_inimigo()
     gold_inimigo = random.randint(inimigo_gerado['gold_min'], inimigo_gerado['gold_max'])
-    Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'], gold_inimigo, inimigo_gerado['chefe'])
+    Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'], gold_inimigo, inimigo_gerado['chefe'], inimigo_gerado['cod_drop'])
 
     #PRIMEIRA BATALHA
     dados_batalha = BATALHA_CONTINUA
@@ -46,7 +47,7 @@ def comecar_jogo():
         if dados_batalha == PROCURAR_INIMIGO or dados_batalha == AREA_ANTERIOR or dados_batalha == AREA_PROXIMA:
             inimigo_gerado = gerar_inimigo(Player.area_atual)
             gold_inimigo = random.randint(inimigo_gerado['gold_min'], inimigo_gerado['gold_max'])
-            Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'], gold_inimigo, inimigo_gerado['chefe'])
+            Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'], gold_inimigo, inimigo_gerado['chefe'], inimigo_gerado['cod_drop'])
 
             print(f'Um {Inimigo.nome} te atacou. Batalha iniciada!')
             esperar_jogador()
