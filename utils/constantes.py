@@ -1,6 +1,6 @@
 #QTD PONTOS DE ATRIBUTO
 QTD_PONTOS_ATRIBUTOS = 5
-PONTOS_LEVEL_UP = 2
+PONTOS_LEVEL_UP = 3
 
 # CLASSES
 GUERREIRO = 'guerreiro'
@@ -30,6 +30,7 @@ TROCAR_EQUIPAMENTO = 'equip'
 VERIFICAR_ATRIBUTOS = 'atributos'
 AREA_PROXIMA = 'area_proxima'
 AREA_ANTERIOR = 'area_anterior'
+FUGIR = 'fugir'
 
 
 
@@ -37,6 +38,7 @@ AREA_ANTERIOR = 'area_anterior'
 FOGO = 'fire'
 CURA = 'cure'
 RESTAURAR = 'restore'
+REGEN = 'regen'
 
 ADICIONAR = True
 REMOVER = False
@@ -47,6 +49,6 @@ PLAYER_MORREU = 'game_over'
 BATALHA_CONTINUA = 'batalha_continua'
 
 #RESTAURACAO POÇÕES
-POTION = 100
-HIPOTION = 250
+POTION = 300
+HIPOTION = 1000
 MANAPOTION = 80

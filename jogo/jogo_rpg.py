@@ -2,7 +2,7 @@ import os
 import sys
 import random
 from models.personagem import Personagem
-from utils.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU, PROCURAR_INIMIGO, AREA_ANTERIOR, AREA_PROXIMA
+from utils.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU, PROCURAR_INIMIGO, AREA_ANTERIOR, AREA_PROXIMA, FUGIR
 from models.inimigos import gerar_inimigo, gerar_primeiro_inimigo
 from utils.mensagens import INICIANDO_RPG, esperar_jogador, escolher_classe
 
@@ -54,6 +54,11 @@ def comecar_jogo():
             dados_turno = BATALHA_CONTINUA
             while dados_turno == BATALHA_CONTINUA:
                 dados_turno = Player.acao_turno(Player.nome, Inimigo.nome)
+
+                if dados_batalha == FUGIR:
+                    print('\nVocê fugiu da batalha, não ganhou nenhuma XP!\n')
+                    esperar_jogador()
+                    break
 
                 if dados_turno == '' or dados_turno == BATALHA_CONTINUA:
                     dados_turno = BATALHA_CONTINUA
