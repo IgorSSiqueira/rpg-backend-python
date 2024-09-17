@@ -1,11 +1,12 @@
 import random
+import os
 from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
 from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR, RESTAURAR, VERIFICAR_ATRIBUTOS, FORCA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, ADICIONAR, GUERREIRO, MAGO, FUGIR, REGEN
 from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, escolhas_acao_antes_batalha
-import os
+from DB.rpg_backend_DB import salvar_player, salvar_items, salvar_atributos, salvar_equipamento, create_database, create_tables, ler_tabela
 
 class Personagem:
     personagens = []
@@ -34,8 +35,7 @@ class Personagem:
             self._level = level
             self.HPmax = int(((60 * level) * 3) if is_boss else (60 * level))
             self.HP = self.HPmax
-            # self.XP = int((20 + (20 * round(level * 1.8))) * 1.5) if is_boss else int((10 + (10 * round(level * 1.2))) * 1.5)
-            self.XP = int((20 + (20 * round(level * 1.8))) * 8) if is_boss else int((10 + (10 * round(level * 1.2))) * 4)
+            self.XP = int((20 + (20 * round(level * 1.8))) * 5) if is_boss else int((10 + (10 * round(level * 1.2))) * 2)
             self.dano_base = (random.randint(level * 3, (level * 7)) * 4) if is_boss else (random.randint(level * 3, (level * 7)))
             self.defesa_base = (int(random.randint(level, (level * 4)) * 1.5)) if is_boss else (random.randint(level, (level * 4)))
             self.cod_arma = cod_arma_inimigo
@@ -75,7 +75,7 @@ class Personagem:
                     print('Item não encontrado para a opção escolhida')
 
     def iniciar_rpg(self, nome_personagem):       
-        print(f'Olá {nome_personagem}, seja bem vindo!!')
+        print(f'Olá {nome_personagem.capitalize()}, seja bem vindo!!')
         esperar_jogador()    
         self.while_incluir_atributos(nome_personagem, QTD_PONTOS_ATRIBUTOS)        
         
@@ -221,7 +221,7 @@ class Personagem:
                             dano_max_player = Itens._itens[nome_player][cod_arma_player]['dano_max']
 
                             str_player = self._atributos.retornar_atributo(nome_player, FORCA)
-                            dano_causado_player = random.randint(dano_min_player, dano_max_player) + (str_player * 3)            
+                            dano_causado_player = random.randint(dano_min_player + int(str_player/2), dano_max_player + int(str_player/1.5) ) + (str_player * 4)            
                         
                         elif acao_turno == USAR_MAGIA:
                             if player.MP > 5:
@@ -442,3 +442,6 @@ class Personagem:
                         personagem._atributos.adicionar_remover_ponto_atributo(nome_personagem, FORCA, adicionar_remover, bonus_str_int)
                     else:
                         personagem._atributos.adicionar_remover_ponto_atributo(nome_personagem, INTELIGENCIA, adicionar_remover, bonus_str_int)
+    
+    def salvar_player():
+        pass

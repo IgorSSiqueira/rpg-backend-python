@@ -197,7 +197,7 @@ def retornar_usar_magias(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_
                       '5 - Voltar')
         opc = while_acao(texto_info, texto_input, 4, magia_cura_antes_batalha_while = magia_cura_antes_batalha, magia=True)
 
-    elif 70 < mp_atual < 150:
+    elif 90 < mp_atual < 150:
         texto_info = ('Magia(s) disponível!\n'
                       f"{'' if magia_cura_antes_batalha else '1 - Fire\n'}"
                       '2 - Cure\n'
@@ -205,7 +205,7 @@ def retornar_usar_magias(hp_atual, hp_max, mp_atual, mp_max, xp_atual, xp_level_
                       '5 - Voltar')
         opc = while_acao(texto_info, texto_input, 3, magia_cura_antes_batalha_while = magia_cura_antes_batalha, magia=True)
 
-    elif 20 < mp_atual < 70:
+    elif 20 < mp_atual < 90:
         texto_info = ('Magia(s) disponível!\n'
                      f"{'' if magia_cura_antes_batalha else '1 - Fire\n'}"
                      '2 - Cure\n'

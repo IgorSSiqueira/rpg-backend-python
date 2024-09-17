@@ -5,12 +5,21 @@ from models.personagem import Personagem
 from utils.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU, PROCURAR_INIMIGO, AREA_ANTERIOR, AREA_PROXIMA, FUGIR
 from models.inimigos import gerar_inimigo, gerar_primeiro_inimigo
 from utils.mensagens import INICIANDO_RPG, esperar_jogador, escolher_classe
+from DB.rpg_backend_DB import veriquicar_player_existe
 
 def comecar_jogo():
     os.system('cls')
     print(INICIANDO_RPG)
     
-    nome_jogador = input('Digite o nome do seu personagem: ')
+    while True:
+        nome_jogador = input('Digite o nome do seu personagem: ').upper()
+        player_existe = veriquicar_player_existe(nome_jogador)
+
+        if player_existe:
+            print('Este nome de jogador já existe. Por favor escolha outro!\n')
+        else:
+            break
+
     classe = escolher_classe()
 
     Player = Personagem(nome_jogador, True, classe = classe)

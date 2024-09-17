@@ -13,14 +13,14 @@ class Itens:
                 2:  {'cod': 2 , 'nome': 'Hi Potion'         , 'quantidade': 0, 'cura': HIPOTION, 'drop_chance': 3 , 'custo_compra': 500, 'custo_venda': 100},
                 3:  {'cod': 3 , 'nome': 'Mana Potion'       , 'quantidade': 0, 'cura': MANAPOTION, 'drop_chance': 8 , 'custo_compra': 150, 'custo_venda': 40},
  
-                4:  {'cod': 4 , 'nome': 'Espada Inicial'    , 'quantidade': 0, 'dano_min': 20, 'dano_max': 60 , 'maos': 1, 'tipo_bonus': 'str', 'bonus': 10 , 'drop_chance': 7 , 'custo_compra': 100, 'custo_venda': 10},
+                4:  {'cod': 4 , 'nome': 'Espada Inicial'    , 'quantidade': 0, 'dano_min': 20, 'dano_max': 60 , 'maos': 1, 'tipo_bonus': 'str', 'bonus': 10, 'drop_chance': 7 , 'custo_compra': 100, 'custo_venda': 10},
                 5:  {'cod': 5 , 'nome': 'Cetro Inicial'     , 'quantidade': 0, 'dano_min': 5 , 'dano_max': 8  , 'maos': 1, 'tipo_bonus': 'int', 'bonus': 15, 'drop_chance': 7 , 'custo_compra': 100, 'custo_venda': 10},
-                6:  {'cod': 6 , 'nome': 'Escudo Básico'     , 'quantidade': 0, 'dano_min': 0 , 'dano_max': 0  , 'maos': 1, 'tipo_bonus': 'def', 'bonus': 8 , 'drop_chance': 13, 'custo_compra': 300, 'custo_venda': 50},
-                7:  {'cod': 7 , 'nome': 'Espada Longa'      , 'quantidade': 0, 'dano_min': 40, 'dano_max': 120, 'maos': 2, 'tipo_bonus': 'str', 'bonus': 40, 'drop_chance': 5 , 'custo_compra': 800, 'custo_venda': 240},
-                8:  {'cod': 8 , 'nome': 'Cetro Médio'       , 'quantidade': 0, 'dano_min': 10, 'dano_max': 15 , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 30, 'drop_chance': 5 , 'custo_compra': 800, 'custo_venda': 240},
+                6:  {'cod': 6 , 'nome': 'Escudo Básico'     , 'quantidade': 0, 'dano_min': 0 , 'dano_max': 0  , 'maos': 1, 'tipo_bonus': 'def', 'bonus': 8 , 'drop_chance': 20, 'custo_compra': 300, 'custo_venda': 50},
+                7:  {'cod': 7 , 'nome': 'Espada Longa'      , 'quantidade': 0, 'dano_min': 40, 'dano_max': 120, 'maos': 2, 'tipo_bonus': 'str', 'bonus': 40, 'drop_chance': 10 , 'custo_compra': 800, 'custo_venda': 240},
+                8:  {'cod': 8 , 'nome': 'Cetro Médio'       , 'quantidade': 0, 'dano_min': 10, 'dano_max': 15 , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 30, 'drop_chance': 10 , 'custo_compra': 800, 'custo_venda': 240},
 
-                9:  {'cod': 9 , 'nome': 'Cetro Mágico'      , 'quantidade': 0, 'dano_min': 20, 'dano_max': 30 , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 45, 'tipo_especial': 'restaura_mana', 'especial': 50 , 'desc_esp': 'Restaura 50 de mana quando mata um inimigo', 'drop_chance': 2, 'custo_compra': 3000, 'custo_venda': 1},
-                10: {'cod': 10, 'nome': 'Espada Vampírica'  , 'quantidade': 0, 'dano_min': 20, 'dano_max': 300, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 30, 'tipo_especial': 'roubo_vida'   , 'especial': 100, 'desc_esp': 'Restaura 100% do dano causado'             , 'drop_chance': 2, 'custo_compra': 5000, 'custo_venda': 1},
+                9:  {'cod': 9 , 'nome': 'Cetro Mágico'      , 'quantidade': 0, 'dano_min': 20, 'dano_max': 30 , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 45, 'tipo_especial': 'restaura_mana', 'especial': 50 , 'desc_esp': 'Restaura 50 de mana quando mata um inimigo', 'drop_chance': 5, 'custo_compra': 3000, 'custo_venda': 1},
+                10: {'cod': 10, 'nome': 'Espada Vampírica'  , 'quantidade': 0, 'dano_min': 20, 'dano_max': 300, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 30, 'tipo_especial': 'roubo_vida'   , 'especial': 100, 'desc_esp': 'Restaura 100% do dano causado'             , 'drop_chance': 5, 'custo_compra': 5000, 'custo_venda': 1},
             }
 
     @classmethod
