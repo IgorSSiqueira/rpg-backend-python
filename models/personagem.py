@@ -6,7 +6,7 @@ from models.magias import Magias
 from models.equipamentos import Equipamentos
 from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR, RESTAURAR, VERIFICAR_ATRIBUTOS, FORCA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, ADICIONAR, GUERREIRO, MAGO, FUGIR, REGEN
 from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, escolhas_acao_antes_batalha
-from DB.rpg_backend_DB import salvar_player, salvar_items, salvar_atributos, salvar_equipamento, create_database, create_tables, ler_tabela
+from DB.rpg_backend_DB import salvar_player, salvar_atributos, salvar_equipamento, ler_tabela
 
 class Personagem:
     personagens = []
@@ -443,5 +443,18 @@ class Personagem:
                     else:
                         personagem._atributos.adicionar_remover_ponto_atributo(nome_personagem, INTELIGENCIA, adicionar_remover, bonus_str_int)
     
-    def salvar_player():
-        pass
+    def salvar_jogo(self, nome):
+        for player in self.personagens:
+            if player.nome == nome:
+                salvar_player(nome, player._level, player.hpmax, player.hp, player.MPmax, player.MP, player.XP, player.XPup, player.gold, player.area_atual, player.classe)
+                salvar_atributos(nome, 
+                                 player._atributos.retornar_atributo(FORCA), 
+                                 player._atributos.retornar_atributo(INTELIGENCIA), 
+                                 player._atributos.retornar_atributo(VITALIDADE), 
+                                 player._atributos.retornar_atributo(DEFESA))
+                self._inventario.gravar_items(nome)
+                salvar_equipamento(nome, self._equipamentos.retornar_arma_escudo(nome, ARMA), self._equipamentos.retornar_arma_escudo(nome, ESCUDO))
+
+    def carregar_jogo(self, nome):
+        where = f"nome = '{nome}'"
+        jogador = ler_tabela('*', 'PLAYER', where)

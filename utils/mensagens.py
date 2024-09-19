@@ -1,16 +1,62 @@
 import msvcrt
-from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA, VERIFICAR_ATRIBUTOS, POTION, HIPOTION, MANAPOTION, GUERREIRO, MAGO, FUGIR, REGEN
+from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA, VERIFICAR_ATRIBUTOS, POTION, HIPOTION, MANAPOTION, GUERREIRO, MAGO, FUGIR, REGEN, NOVO_JOGO, CONTINUAR
 import os
-
+from DB.rpg_backend_DB import veriquicar_player_existe, create_database, create_tables, ler_tabela
 
 #FRASES DE PARTES DO JOGO
 INICIANDO_RPG = ('**********************\n'+'Iniciando Jogo de RPG\n'+'**********************\n')
 
+def novo_ou_carregar_jogo():
+    print('1 - Novo Jogo\n'
+         +'2 - Carregar jogo')
+    while True:
+        opc = input('Selecione uma opção:: ')
+
+        if opc == 1:
+            return NOVO_JOGO
+        elif opc == 2:
+            return CONTINUAR
+        else:
+            print('Opção inválida!\n')  
+
+def carregar_personagem():
+    nomes_players = ler_tabela('nome', 'PLAYER')
+    for nome in nomes_players:
+        print(nome[0])
+    player = input('\nDigite o nome do personagem que deseja carregar.\n:: ')
+
+    while True:
+        is_valid = veriquicar_player_existe(player)
+        if not is_valid:
+            print('Nome digitado inválido, favor digitar um nome válido:')
+            player = input('\nDigite o nome do player que deseja carregar.\n:: ')
+        else:
+            return player
+
+
+def verificar_primeiro_acesso():
+    path = 'first_access.flag'
+
+    if not os.path.exists(path):
+        with open(path, 'w') as flag_file:
+            flag_file.write('Programa iniciado!')
+        
+        create_database()
+        create_tables()      
+
+def solicitar_nome():
+    while True:
+        nome_jogador = input('Digite o nome do seu personagem: ').upper()
+        player_existe = veriquicar_player_existe(nome_jogador)
+
+        if player_existe:
+            print('Este nome de jogador já existe. Por favor escolha outro!\n')
+        else:
+            return nome_jogador
+
 def esperar_jogador():
     print('Aperte qualquer tecla para continuar!')
     msvcrt.getch()
-
-
 
 def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolher_itens = False, qtd_potion = 0, qtd_hipotion = 0, qtd_manapotion = 0, magia_cura_antes_batalha_while = False, nome_personagem = '', area_max = False, magia = False):
     while True:

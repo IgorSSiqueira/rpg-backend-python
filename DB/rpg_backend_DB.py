@@ -239,13 +239,12 @@ def salvar_items(nome_player, cod_item, quantidade):
 #################### ***** ####################
 #################### ***** ####################
 
-def ler_tabela(tabela):
+def ler_tabela(dados, tabela, where = ''):
     try:
         conn = return_connection()
         cursor = conn.cursor()
 
-        query = f'SELECT * FROM {tabela};'
-        
+        query = f'SELECT {dados} FROM {tabela} {where};'
         cursor.execute(query)
         rows = cursor.fetchall()
         
@@ -264,7 +263,7 @@ def veriquicar_player_existe(nome):
         conn = return_connection()
         cursor = conn.cursor()
         
-        cursor.execute('SELECT nome FROM player WHERE nome = %s', (nome,))
+        cursor.execute('SELECT nome FROM PLAYER WHERE nome = %s', (nome,))
         
         existe_player = cursor.fetchone()
 
@@ -281,19 +280,19 @@ def veriquicar_player_existe(nome):
 #################### ***** ####################
 #################### ***** ####################
 
-def delete_data(nome_player):
-    try:
-        conn = return_connection()
-        cursor = conn.cursor()
+# def delete_data(nome_player):
+#     try:
+#         conn = return_connection()
+#         cursor = conn.cursor()
         
-        ##
-        ## APENAS UM EXEMPLO, AINDA VOU ALTERAR
-        ##
-        cursor.execute('DELETE FROM PLAYER WHERE nome = %s;', (nome_player,))
-        conn.commit()
-        print('Dados deletados com sucesso.')
+#         ##
+#         ## APENAS UM EXEMPLO, AINDA VOU ALTERAR
+#         ##
+#         cursor.execute('DELETE FROM PLAYER WHERE nome = %s;', (nome_player,))
+#         conn.commit()
+#         print('Dados deletados com sucesso.')
         
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        print(f'Erro ao deletar os dados: {e}')
+#         cursor.close()
+#         conn.close()
+#     except Exception as e:
+#         print(f'Erro ao deletar os dados: {e}')

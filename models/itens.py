@@ -1,5 +1,6 @@
 from utils.mensagens import retornar_usar_pocao
 from utils.constantes import POTION, HIPOTION, MANAPOTION
+from DB.rpg_backend_DB import salvar_items
 
 class Itens:
     _itens = {}
@@ -169,3 +170,8 @@ class Itens:
         else:
             print(f"Personagem '{nome_personagem}' não encontrado")
             return False
+        
+    def gravar_items(self, nome):
+        for cod_item, item in Itens._itens[nome].items():
+            qtd = item['quantidade']
+            salvar_items(nome, cod_item, qtd)

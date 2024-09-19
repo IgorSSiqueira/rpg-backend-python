@@ -2,53 +2,52 @@ import os
 import sys
 import random
 from models.personagem import Personagem
-from utils.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU, PROCURAR_INIMIGO, AREA_ANTERIOR, AREA_PROXIMA, FUGIR
+from utils.constantes import BATALHA_CONTINUA, INIMIGO_MORREU, PLAYER_MORREU, PROCURAR_INIMIGO, AREA_ANTERIOR, AREA_PROXIMA, FUGIR, NOVO_JOGO
 from models.inimigos import gerar_inimigo, gerar_primeiro_inimigo
-from utils.mensagens import INICIANDO_RPG, esperar_jogador, escolher_classe
-from DB.rpg_backend_DB import veriquicar_player_existe
+from utils.mensagens import INICIANDO_RPG, esperar_jogador, escolher_classe, novo_ou_carregar_jogo, solicitar_nome, verificar_primeiro_acesso, CONTINUAR, carregar_personagem
+
 
 def comecar_jogo():
     os.system('cls')
     print(INICIANDO_RPG)
     
-    while True:
-        nome_jogador = input('Digite o nome do seu personagem: ').upper()
-        player_existe = veriquicar_player_existe(nome_jogador)
+    tipo_jogo = novo_ou_carregar_jogo()
 
-        if player_existe:
-            print('Este nome de jogador já existe. Por favor escolha outro!\n')
-        else:
-            break
+    if tipo_jogo == CONTINUAR:
+        nome_jogador = carregar_personagem()
 
-    classe = escolher_classe()
+    if tipo_jogo == NOVO_JOGO:
+        verificar_primeiro_acesso()
+        nome_jogador = solicitar_nome()
+        classe = escolher_classe()
 
-    Player = Personagem(nome_jogador, True, classe = classe)
-    Player.iniciar_rpg(Player.nome)
+        Player = Personagem(nome_jogador, True, classe = classe)
+        Player.iniciar_rpg(Player.nome)
 
-    os.system('cls')
-    print('Enquanto você estava terminando de se equipar, apareceu um goblin e te atacou.\nBATALHA INICIADA')
-    esperar_jogador()
-    inimigo_gerado = gerar_primeiro_inimigo()
-    gold_inimigo = random.randint(inimigo_gerado['gold_min'], inimigo_gerado['gold_max'])
-    Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'], gold_inimigo, inimigo_gerado['chefe'], inimigo_gerado['cod_drop'])
+        os.system('cls')
+        print('Enquanto você estava terminando de se equipar, apareceu um goblin e te atacou.\nBATALHA INICIADA')
+        esperar_jogador()
+        inimigo_gerado = gerar_primeiro_inimigo()
+        gold_inimigo = random.randint(inimigo_gerado['gold_min'], inimigo_gerado['gold_max'])
+        Inimigo = Personagem(inimigo_gerado['nome'], False, inimigo_gerado['level'], inimigo_gerado['cod_arma'], gold_inimigo, inimigo_gerado['chefe'], inimigo_gerado['cod_drop'])
 
-    #PRIMEIRA BATALHA
-    dados_batalha = BATALHA_CONTINUA
-    while dados_batalha == BATALHA_CONTINUA:
-        dados_batalha = Player.acao_turno(Player.nome, Inimigo.nome)
+        #PRIMEIRA BATALHA
+        dados_batalha = BATALHA_CONTINUA
+        while dados_batalha == BATALHA_CONTINUA:
+            dados_batalha = Player.acao_turno(Player.nome, Inimigo.nome)
 
-        if dados_batalha == '':
-            dados_batalha = BATALHA_CONTINUA
-            continue
-        elif dados_batalha == BATALHA_CONTINUA:
-            continue
-        elif dados_batalha == INIMIGO_MORREU:
-            break
-        elif dados_batalha == PLAYER_MORREU:
-            print('GAME OVER')
-            esperar_jogador()
-            sys.exit()
-            #CHAMAR FUNÇÃO PARA INICIAR O JOGO NOVAMENTE OU FECHAR O JOGO
+            if dados_batalha == '':
+                dados_batalha = BATALHA_CONTINUA
+                continue
+            elif dados_batalha == BATALHA_CONTINUA:
+                continue
+            elif dados_batalha == INIMIGO_MORREU:
+                break
+            elif dados_batalha == PLAYER_MORREU:
+                print('GAME OVER')
+                esperar_jogador()
+                sys.exit()
+                #CHAMAR FUNÇÃO PARA INICIAR O JOGO NOVAMENTE OU FECHAR O JOGO
 
     while True:
         dados_batalha = Player.acao_antes_batalha(Player.nome)
