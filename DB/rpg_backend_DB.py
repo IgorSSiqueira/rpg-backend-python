@@ -88,7 +88,7 @@ def salvar_player(nome_player, level, hpmax, hp, mpmax, mp, xp, xpup, gold, area
 
         cursor.execute('''
             SELECT EXISTS (
-                SELECT 1 FROM PLAYER WHERE nome = %s
+                SELECT 1 FROM PLAYER WHERE nome = '%s'
             );
         ''', (nome_player,))
         
@@ -133,7 +133,7 @@ def salvar_atributos(nome_player, forca, inteligencia, vitalidade, defesa):
 
         cursor.execute('''
             SELECT EXISTS (
-                SELECT 1 FROM ATRIBUTOS WHERE nome = %s
+                SELECT 1 FROM ATRIBUTOS WHERE nome = '%s'
             );
         ''', (nome_player,))
         
@@ -146,7 +146,7 @@ def salvar_atributos(nome_player, forca, inteligencia, vitalidade, defesa):
                 inteligencia  = %s,
                 vitalidade    = %s,
                 defesa        = %s
-            WHERE nome_player = %s;
+            WHERE nome_player = '%s';
             ''', (forca, inteligencia, vitalidade, defesa, nome_player))
         else:
             cursor.execute('''
@@ -172,7 +172,7 @@ def salvar_equipamento(nome_player, arma, escudo):
 
         cursor.execute('''
                 SELECT EXISTS (
-                    SELECT 1 FROM EQUIPAMENTOS WHERE nome = %s
+                    SELECT 1 FROM EQUIPAMENTOS WHERE nome = '%s'
                 );
             ''', (nome_player,))
         
@@ -183,7 +183,7 @@ def salvar_equipamento(nome_player, arma, escudo):
             UPDATE EQUIPAMENTOS
                SET arma        = %s,
                    escudo      = %s
-             WHERE nome_player = %s;
+             WHERE nome_player = '%s';
             ''', (arma, escudo, nome_player))
         else:
             cursor.execute('''
@@ -208,7 +208,7 @@ def salvar_items(nome_player, cod_item, quantidade):
         
         cursor.execute('''
                 SELECT EXISTS (
-                    SELECT quantidade FROM ITEMS WHERE nome_player = %s and cod_item = %s
+                    SELECT quantidade FROM ITEMS WHERE nome_player = '%s' and cod_item = %s
                 );
             ''', (nome_player, cod_item))
         
@@ -221,7 +221,7 @@ def salvar_items(nome_player, cod_item, quantidade):
             UPDATE ITEMS
             SET cod_item   = %s,
                 quantidade = %s
-            WHERE nome_player = %s;
+            WHERE nome_player = '%s';
             ''', (cod_item, quantidade, nome_player))
         else:
             cursor.execute('''
@@ -263,7 +263,7 @@ def veriquicar_player_existe(nome):
         conn = return_connection()
         cursor = conn.cursor()
         
-        cursor.execute('SELECT nome FROM PLAYER WHERE nome = %s', (nome,))
+        cursor.execute("SELECT nome FROM PLAYER WHERE nome = '%s'", (nome,))
         
         existe_player = cursor.fetchone()
 
