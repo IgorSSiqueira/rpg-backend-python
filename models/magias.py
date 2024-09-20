@@ -1,5 +1,5 @@
 import random
-from utils.constantes import FOGO, CURA, RESTAURAR, REGEN
+from utils.constantes import FOGO, CURA, RESTAURAR, REGEN, MAGO
 class Magias:
     def __init__(self):
         self._magias = {
@@ -20,8 +20,13 @@ class Magias:
         perc = random.uniform(self._magias[CURA]['min'], self._magias[CURA]['max'])
         return round((hp_max * perc) + (int(int_player*3.5)))
     
-    def regen(self, hp_max, int_player):
-        regen_total = (hp_max * 0.15) + (int_player * 0.5)
+    def regen(self, hp_max, int_player, classe):
+        
+        regen_total = (hp_max * 0.08) + (int_player * 0.3)
+
+        if classe == MAGO:
+            regen_total = (hp_max * 0.15) + (int_player * 0.5)
+
         return int(regen_total)
 
 

@@ -6,7 +6,7 @@ from models.magias import Magias
 from models.equipamentos import Equipamentos
 from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR, RESTAURAR, VERIFICAR_ATRIBUTOS, FORCA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, ADICIONAR, GUERREIRO, MAGO, FUGIR, REGEN
 from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, escolhas_acao_antes_batalha
-from DB.rpg_backend_DB import salvar_player, salvar_atributos, salvar_equipamento, ler_tabela
+from DB.rpg_backend_DB import salvar_player, salvar_atributos, salvar_equipamento
 
 class Personagem:
     personagens = []
@@ -92,9 +92,6 @@ class Personagem:
                 if opc_equip >= 4 and opc_equip <= 5:
                     self._inventario.adicionar_item(nome_personagem, opc_equip)
                     self._equipamentos.equipar_primeiro_item(nome_personagem, opc_equip)
-                    # self._inventario.adicionar_item(nome_personagem, 10)
-                    # self._equipamentos.equipar_primeiro_item(nome_personagem, 10)
-                    # self.adicionar_remover_atributos_equipamentos(nome_personagem, ARMA, ADICIONAR)
                     self.update_dados(nome_personagem)
                     break
                 else:
@@ -245,7 +242,7 @@ class Personagem:
                                     print(f'Restaurou {curou} de HP!')
 
                                 elif opc_magia == REGEN:
-                                    player.regen = player._magias.regen(player.HPmax, inteligencia_total)
+                                    player.regen = player._magias.regen(player.HPmax, inteligencia_total, player.classe)
                                     player.MP -= self._magias.custo_mana(REGEN)
                                     
                                 else:
@@ -454,7 +451,20 @@ class Personagem:
                                  player._atributos.retornar_atributo(DEFESA))
                 self._inventario.gravar_items(nome)
                 salvar_equipamento(nome, self._equipamentos.retornar_arma_escudo(nome, ARMA), self._equipamentos.retornar_arma_escudo(nome, ESCUDO))
-
-    def carregar_jogo(self, nome):
-        where = f"nome = '{nome}'"
-        jogador = ler_tabela('*', 'PLAYER', where)
+        
+    def carregados_dados_salvos(self, dados):
+        for player in self.personagens:
+            if player.nome == dados[0]:
+                player._level = dados[1]
+                player.HPmax = dados[2]
+                player.HP = dados[3]
+                player.MPmax = dados[4]
+                player.MP = dados[5]
+                player.XP = dados[6]
+                player.XPup = dados[7]
+                player.gold = dados[8]
+                player.area_atual = dados[9]
+                player.classe = dados[10]
+                self._inventario.carregar_itens(dados[0])
+                self._atributos.carregar_atributos(dados[0])
+                self._equipamentos.carregar_arma_escudo(dados[0])

@@ -1,4 +1,5 @@
-from utils.constantes import DEFESA, FORCA, INTELIGENCIA, VITALIDADE, FORCA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, DEFESA_EQUIPAMENTO
+from utils.constantes import DEFESA, FORCA, INTELIGENCIA, VITALIDADE, FORCA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, ADICIONAR
+from DB.rpg_backend_DB import ler_tabela
 
 class Atributos:
     _atributos = {}
@@ -41,6 +42,14 @@ class Atributos:
     
     def zerar_atributo_equipamento(self, nome_personagem, atributo):
         self._atributos[nome_personagem][atributo] = 0
+
+    def carregar_atributos(self, nome):
+        where = f" where nome_player = '{nome}'"
+        dados = ler_tabela('forca, inteligencia, vitalidade, defesa', 'ATRIBUTOS', where)
+        self.adicionar_remover_ponto_atributo(nome, FORCA, ADICIONAR, dados[0])
+        self.adicionar_remover_ponto_atributo(nome, INTELIGENCIA, ADICIONAR, dados[1])
+        self.adicionar_remover_ponto_atributo(nome, VITALIDADE, ADICIONAR, dados[2])
+        self.adicionar_remover_ponto_atributo(nome, DEFESA, ADICIONAR, dados[3])
 
         
     

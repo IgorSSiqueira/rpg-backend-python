@@ -1,6 +1,6 @@
 from utils.mensagens import retornar_usar_pocao
 from utils.constantes import POTION, HIPOTION, MANAPOTION
-from DB.rpg_backend_DB import salvar_items
+from DB.rpg_backend_DB import salvar_items, ler_tabela
 
 class Itens:
     _itens = {}
@@ -127,11 +127,12 @@ class Itens:
             return f"Personagem '{nome_personagem}' não encontrado"
     
     @classmethod
-    def adicionar_item(cls, nome_personagem, cod, quantidade = 1):
+    def adicionar_item(cls, nome_personagem, cod, quantidade = 1, is_load = False):
         if nome_personagem in cls._itens:
             if cod in cls._itens[nome_personagem]:
                 cls._itens[nome_personagem][cod]['quantidade'] += quantidade
-                print(f"{quantidade} {cls._itens[nome_personagem][cod]['nome']}(s) adicionados ao inventário!")
+                if not is_load:
+                    print(f"{quantidade} {cls._itens[nome_personagem][cod]['nome']}(s) adicionados ao inventário!")
                 return True
             else:
                 print("Item inválido")
@@ -175,3 +176,9 @@ class Itens:
         for cod_item, item in Itens._itens[nome].items():
             qtd = item['quantidade']
             salvar_items(nome, cod_item, qtd)
+    
+    def carregar_itens(self, nome):
+        where = f" where nome_player = '{nome}'"
+        dados = ler_tabela('cod_item, quantidade', 'ITEMS', where)
+        for dado in dados:
+            self.adicionar_item(nome, dado[1], dado[2], True)

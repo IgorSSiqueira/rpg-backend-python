@@ -22,16 +22,17 @@ def novo_ou_carregar_jogo():
 def carregar_personagem():
     nomes_players = ler_tabela('nome', 'PLAYER')
     for nome in nomes_players:
-        print(nome[0])
-    player = input('\nDigite o nome do personagem que deseja carregar.\n:: ')
+        print(nome[0].capitalize())
 
     while True:
+        player = input('\nDigite o nome do personagem que deseja carregar.\n:: ')
+        player = player.upper
         is_valid = veriquicar_player_existe(player)
         if not is_valid:
             print('Nome digitado inválido, favor digitar um nome válido:')
-            player = input('\nDigite o nome do player que deseja carregar.\n:: ')
         else:
-            return player
+            where = f"nome = '{player}'"
+            return ler_tabela('*', 'PLAYER', where)
 
 
 def verificar_primeiro_acesso():

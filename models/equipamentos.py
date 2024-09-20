@@ -1,6 +1,7 @@
 from models.itens import Itens
 from models.atributos import Atributos
 from utils.constantes import ARMA, ESCUDO, FORCA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, ADICIONAR
+from DB.rpg_backend_DB import ler_tabela
 
 class Equipamentos:
     _equipados = {}
@@ -14,7 +15,7 @@ class Equipamentos:
                 ESCUDO: {},            
             }
     
-    def equipar_item(nome_personagem, cod, espaco):
+    def equipar_item(nome_personagem, cod, espaco, is_load = False):
         Equipamentos._equipados[nome_personagem][espaco] = Itens._itens[nome_personagem][cod]
         Itens.remover_item(nome_personagem, cod, 1)
 
@@ -25,7 +26,8 @@ class Equipamentos:
         else:
             Atributos.adicionar_remover_ponto_atributo(Atributos, nome_personagem, DEFESA_EQUIPAMENTO, ADICIONAR, Itens._itens[nome_personagem][cod]['bonus'])
 
-        print(f'{Itens._itens[nome_personagem][cod]['nome']} equipado(a)!')
+        if not is_load:
+            print(f'{Itens._itens[nome_personagem][cod]['nome']} equipado(a)!')
     
     def desequipar_item(nome_personagem, espaco):
         cod_equipamento = Equipamentos._equipados[nome_personagem][espaco]['cod']
@@ -173,3 +175,12 @@ class Equipamentos:
             return cls._equipados[nome_personagem][equipamento]['cod'] 
         else:
             return 0
+        
+    def carregar_arma_escudo(self, nome):
+        where = f" where nome_player = '{nome}'"
+        dados = ler_tabela('arma, escudo', 'EQUIPAMENTOS', where)
+
+        self.equipar_item(dados[0], ARMA, True)
+
+        if dados[1] > 0:
+            self.equipar_item(dados[1], ESCUDO, True)

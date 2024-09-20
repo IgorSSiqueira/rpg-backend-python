@@ -14,7 +14,8 @@ def comecar_jogo():
     tipo_jogo = novo_ou_carregar_jogo()
 
     if tipo_jogo == CONTINUAR:
-        nome_jogador = carregar_personagem()
+        dados_jogador = carregar_personagem()
+        Player = Personagem(dados_jogador[0], True)
 
     if tipo_jogo == NOVO_JOGO:
         verificar_primeiro_acesso()
