@@ -8,6 +8,7 @@ from utils.mensagens import INICIANDO_RPG, esperar_jogador, escolher_classe, nov
 
 
 def comecar_jogo():
+    verificar_primeiro_acesso()
     os.system('cls')
     print(INICIANDO_RPG)
     
@@ -15,10 +16,14 @@ def comecar_jogo():
 
     if tipo_jogo == CONTINUAR:
         dados_jogador = carregar_personagem()
-        Player = Personagem(dados_jogador[0], True)
+        
+        if dados_jogador == NOVO_JOGO:
+            tipo_jogo = NOVO_JOGO
+        else:
+            Player = Personagem(dados_jogador[0][0], True)
+            Player.carregados_dados_salvos(dados_jogador)
 
     if tipo_jogo == NOVO_JOGO:
-        verificar_primeiro_acesso()
         nome_jogador = solicitar_nome()
         classe = escolher_classe()
 

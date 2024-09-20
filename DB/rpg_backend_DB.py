@@ -71,8 +71,6 @@ def create_tables():
         );
         ''')
         conn.commit()
-        print('Tabelas criadas com sucesso.')
-        
         cursor.close()
         conn.close()
     except Exception as e:
@@ -88,7 +86,7 @@ def salvar_player(nome_player, level, hpmax, hp, mpmax, mp, xp, xpup, gold, area
 
         cursor.execute('''
             SELECT EXISTS (
-                SELECT 1 FROM PLAYER WHERE nome = '%s'
+                SELECT 1 FROM PLAYER WHERE nome = %s
             );
         ''', (nome_player,))
         
@@ -114,9 +112,7 @@ def salvar_player(nome_player, level, hpmax, hp, mpmax, mp, xp, xpup, gold, area
                             VALUES (%s  , %s   , %s   , %s, %s   , %s, %s, %s  , %s  , %s        , %s    );
             ''', (nome_player, level, hpmax, hp, mpmax, mp, xp, xpup, gold, area_atual, classe))
         
-        conn.commit()
-        print('Dados salvos com sucesso!')
-        
+        conn.commit()        
         cursor.close()
         conn.close()
 
@@ -133,7 +129,7 @@ def salvar_atributos(nome_player, forca, inteligencia, vitalidade, defesa):
 
         cursor.execute('''
             SELECT EXISTS (
-                SELECT 1 FROM ATRIBUTOS WHERE nome = '%s'
+                SELECT 1 FROM ATRIBUTOS WHERE nome_player = %s
             );
         ''', (nome_player,))
         
@@ -146,7 +142,7 @@ def salvar_atributos(nome_player, forca, inteligencia, vitalidade, defesa):
                 inteligencia  = %s,
                 vitalidade    = %s,
                 defesa        = %s
-            WHERE nome_player = '%s';
+            WHERE nome_player = %s;
             ''', (forca, inteligencia, vitalidade, defesa, nome_player))
         else:
             cursor.execute('''
@@ -154,13 +150,11 @@ def salvar_atributos(nome_player, forca, inteligencia, vitalidade, defesa):
                                VALUES (%s         , %s   , %s          , %s        , %s    );
             ''', (nome_player, forca, inteligencia, vitalidade, defesa))
         
-        conn.commit()
-        print('Dados atualizados com sucesso.')
-        
+        conn.commit()        
         cursor.close()
         conn.close()
     except Exception as e:
-        print(f'Erro ao salvar ATRIBUTOS: {e}')
+        print(f'Erro ao salvar ATRIBUTOS: {e}') 
 
 #################### ***** ####################
 #################### ***** ####################
@@ -172,7 +166,7 @@ def salvar_equipamento(nome_player, arma, escudo):
 
         cursor.execute('''
                 SELECT EXISTS (
-                    SELECT 1 FROM EQUIPAMENTOS WHERE nome = '%s'
+                    SELECT 1 FROM EQUIPAMENTOS WHERE nome_player = %s
                 );
             ''', (nome_player,))
         
@@ -183,7 +177,7 @@ def salvar_equipamento(nome_player, arma, escudo):
             UPDATE EQUIPAMENTOS
                SET arma        = %s,
                    escudo      = %s
-             WHERE nome_player = '%s';
+             WHERE nome_player = %s;
             ''', (arma, escudo, nome_player))
         else:
             cursor.execute('''
@@ -191,12 +185,11 @@ def salvar_equipamento(nome_player, arma, escudo):
                                   VALUES (%s         , %s  , %s    );                           
             ''', (nome_player, arma, escudo))
         conn.commit()
-        print('Dados atualizados com sucesso.')      
-
         cursor.close()
         conn.close()
     except Exception as e:
-        print(f'Erro ao atualizar os dados: {e}')
+        print(f'Erro ao atualizar os dados: {e}') 
+        
 
 #################### ***** ####################
 #################### ***** ####################
@@ -208,33 +201,28 @@ def salvar_items(nome_player, cod_item, quantidade):
         
         cursor.execute('''
                 SELECT EXISTS (
-                    SELECT quantidade FROM ITEMS WHERE nome_player = '%s' and cod_item = %s
+                    SELECT quantidade FROM ITEMS WHERE nome_player = %s and cod_item = %s
                 );
             ''', (nome_player, cod_item))
         
         existe_item = cursor.fetchone()[0]
-        print(f'Printando fech: {existe_item} <-\n')
     
         if existe_item:
-            print('Se entrou aqui tá errado!')
             cursor.execute('''
             UPDATE ITEMS
-            SET cod_item   = %s,
-                quantidade = %s
-            WHERE nome_player = '%s';
-            ''', (cod_item, quantidade, nome_player))
+            SET quantidade = %s
+            WHERE nome_player = %s and cod_item = %s;
+            ''', (quantidade, nome_player, cod_item))
         else:
             cursor.execute('''
                 INSERT INTO ITEMS(nome_player, cod_item, quantidade)
                            VALUES(%s         , %s      , %s);                           
             ''', (nome_player, cod_item, quantidade))
         conn.commit()
-        print('Dados atualizados com sucesso.')      
-
         cursor.close()
         conn.close()
     except Exception as e:
-        print(f'Erro ao atualizar os dados: {e}')
+        print(f'Erro ao salvar os itens: {e}')
 
 #################### ***** ####################
 #################### ***** ####################
@@ -253,7 +241,7 @@ def ler_tabela(dados, tabela, where = ''):
         
         return rows
     except Exception as e:
-        print(f'Erro ao ler os dados: {e}')
+        print(f'Erro ao ler os dados: {e}') 
 
 #################### ***** ####################
 #################### ***** ####################
@@ -263,7 +251,7 @@ def veriquicar_player_existe(nome):
         conn = return_connection()
         cursor = conn.cursor()
         
-        cursor.execute("SELECT nome FROM PLAYER WHERE nome = '%s'", (nome,))
+        cursor.execute("SELECT nome FROM PLAYER WHERE nome = %s", (nome,))
         
         existe_player = cursor.fetchone()
 
@@ -275,7 +263,7 @@ def veriquicar_player_existe(nome):
         else:
             return False
     except Exception as e:
-        print(f'Erro ao ler os dados: {e}')
+        print(f'Erro ao ler os dados: {e}') 
 
 #################### ***** ####################
 #################### ***** ####################

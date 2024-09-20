@@ -4,7 +4,7 @@ from models.atributos import Atributos
 from models.itens import Itens
 from models.magias import Magias
 from models.equipamentos import Equipamentos
-from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR, RESTAURAR, VERIFICAR_ATRIBUTOS, FORCA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, ADICIONAR, GUERREIRO, MAGO, FUGIR, REGEN
+from utils.constantes import ARMA, DEFESA, FORCA, INTELIGENCIA, VITALIDADE, ESCUDO, USAR_ITEM, ATACAR, USAR_MAGIA, QTD_PONTOS_ATRIBUTOS, PONTOS_LEVEL_UP, FOGO, CURA, INIMIGO_MORREU, BATALHA_CONTINUA, PLAYER_MORREU, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_PROXIMA, AREA_ANTERIOR, RESTAURAR, VERIFICAR_ATRIBUTOS, FORCA_EQUIPAMENTO, DEFESA_EQUIPAMENTO, INTELIGENCIA_EQUIPAMENTO, ADICIONAR, GUERREIRO, MAGO, FUGIR, REGEN, SAVE_GAME
 from utils.mensagens import esperar_jogador, escolher_acao, retornar_usar_magias, escolhas_acao_antes_batalha
 from DB.rpg_backend_DB import salvar_player, salvar_atributos, salvar_equipamento
 
@@ -35,7 +35,7 @@ class Personagem:
             self._level = level
             self.HPmax = int(((60 * level) * 3) if is_boss else (60 * level))
             self.HP = self.HPmax
-            self.XP = int((20 + (20 * round(level * 1.8))) * 5) if is_boss else int((10 + (10 * round(level * 1.2))) * 2)
+            self.XP = int((20 + (20 * round(level * 1.8))) * 3.5) if is_boss else int((10 + (10 * round(level * 1.2))) * 2)
             self.dano_base = (random.randint(level * 3, (level * 7)) * 4) if is_boss else (random.randint(level * 3, (level * 7)))
             self.defesa_base = (int(random.randint(level, (level * 4)) * 1.5)) if is_boss else (random.randint(level, (level * 4)))
             self.cod_arma = cod_arma_inimigo
@@ -110,6 +110,9 @@ class Personagem:
         for player in Personagem.personagens:
             if player.nome == nome_player: 
                 acao_realizada = escolhas_acao_antes_batalha(player.area_atual, player.HP,player.HPmax, player.MP, player.MPmax, player.XP, player.XPup, player._level, player.gold)
+
+                if acao_realizada == SAVE_GAME:
+                    self.salvar_jogo(player.nome)
 
                 if acao_realizada == PROCURAR_INIMIGO:
                     return PROCURAR_INIMIGO
@@ -209,6 +212,7 @@ class Personagem:
                 
                         if acao_turno == FUGIR:
                             Personagem.personagens.remove(inimigo) 
+                            player.regen = 0
                             return FUGIR
 
                         if acao_turno == ATACAR:
@@ -443,28 +447,33 @@ class Personagem:
     def salvar_jogo(self, nome):
         for player in self.personagens:
             if player.nome == nome:
-                salvar_player(nome, player._level, player.hpmax, player.hp, player.MPmax, player.MP, player.XP, player.XPup, player.gold, player.area_atual, player.classe)
+                salvar_player(nome, player._level, player.HPmax, player.HP, player.MPmax, player.MP, player.XP, player.XPup, player.gold, player.area_atual, player.classe)
                 salvar_atributos(nome, 
-                                 player._atributos.retornar_atributo(FORCA), 
-                                 player._atributos.retornar_atributo(INTELIGENCIA), 
-                                 player._atributos.retornar_atributo(VITALIDADE), 
-                                 player._atributos.retornar_atributo(DEFESA))
+                                 player._atributos.retornar_atributo(player.nome, FORCA), 
+                                 player._atributos.retornar_atributo(player.nome, INTELIGENCIA), 
+                                 player._atributos.retornar_atributo(player.nome, VITALIDADE), 
+                                 player._atributos.retornar_atributo(player.nome, DEFESA))
                 self._inventario.gravar_items(nome)
                 salvar_equipamento(nome, self._equipamentos.retornar_arma_escudo(nome, ARMA), self._equipamentos.retornar_arma_escudo(nome, ESCUDO))
+                print('\nJogo salvo com sucesso!\n')
+                esperar_jogador()
         
     def carregados_dados_salvos(self, dados):
         for player in self.personagens:
-            if player.nome == dados[0]:
-                player._level = dados[1]
-                player.HPmax = dados[2]
-                player.HP = dados[3]
-                player.MPmax = dados[4]
-                player.MP = dados[5]
-                player.XP = dados[6]
-                player.XPup = dados[7]
-                player.gold = dados[8]
-                player.area_atual = dados[9]
-                player.classe = dados[10]
-                self._inventario.carregar_itens(dados[0])
-                self._atributos.carregar_atributos(dados[0])
-                self._equipamentos.carregar_arma_escudo(dados[0])
+            if player.nome == dados[0][0]:
+                player._level = dados[0][1]
+                player.HPmax = dados[0][2]
+                player.HP = dados[0][3]
+                player.MPmax = dados[0][4]
+                player.MP = dados[0][5]
+                player.XP = dados[0][6]
+                player.XPup = dados[0][7]
+                player.gold = dados[0][8]
+                player.area_atual = dados[0][9]
+                player.classe = dados[0][10]
+                self._inventario.carregar_itens(dados[0][0])
+                self._atributos.carregar_atributos(dados[0][0])
+                self._equipamentos.carregar_arma_escudo(dados[0][0])
+
+                print('\nJogo carregado!!')
+                esperar_jogador()

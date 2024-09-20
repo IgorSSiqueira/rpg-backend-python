@@ -1,4 +1,4 @@
-from utils.mensagens import retornar_usar_pocao
+from utils.mensagens import retornar_usar_pocao, esperar_jogador
 from utils.constantes import POTION, HIPOTION, MANAPOTION
 from DB.rpg_backend_DB import salvar_items, ler_tabela
 
@@ -181,4 +181,4 @@ class Itens:
         where = f" where nome_player = '{nome}'"
         dados = ler_tabela('cod_item, quantidade', 'ITEMS', where)
         for dado in dados:
-            self.adicionar_item(nome, dado[1], dado[2], True)
+            self.adicionar_item(nome, dado[0], dado[1], True)

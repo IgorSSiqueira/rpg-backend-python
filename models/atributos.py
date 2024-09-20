@@ -46,10 +46,11 @@ class Atributos:
     def carregar_atributos(self, nome):
         where = f" where nome_player = '{nome}'"
         dados = ler_tabela('forca, inteligencia, vitalidade, defesa', 'ATRIBUTOS', where)
-        self.adicionar_remover_ponto_atributo(nome, FORCA, ADICIONAR, dados[0])
-        self.adicionar_remover_ponto_atributo(nome, INTELIGENCIA, ADICIONAR, dados[1])
-        self.adicionar_remover_ponto_atributo(nome, VITALIDADE, ADICIONAR, dados[2])
-        self.adicionar_remover_ponto_atributo(nome, DEFESA, ADICIONAR, dados[3])
+
+        self.adicionar_remover_ponto_atributo(nome, FORCA, ADICIONAR, (dados[0][0] -1))
+        self.adicionar_remover_ponto_atributo(nome, INTELIGENCIA, ADICIONAR, (dados[0][1] -1))
+        self.adicionar_remover_ponto_atributo(nome, VITALIDADE, ADICIONAR, (dados[0][2] -1))
+        self.adicionar_remover_ponto_atributo(nome, DEFESA, ADICIONAR, (dados[0][3] -1))
 
         
     

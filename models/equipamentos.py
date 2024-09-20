@@ -17,7 +17,11 @@ class Equipamentos:
     
     def equipar_item(nome_personagem, cod, espaco, is_load = False):
         Equipamentos._equipados[nome_personagem][espaco] = Itens._itens[nome_personagem][cod]
-        Itens.remover_item(nome_personagem, cod, 1)
+        if is_load:
+            return
+        
+        if not is_load:
+            Itens.remover_item(nome_personagem, cod, 1)
 
         if Itens._itens[nome_personagem][cod]['tipo_bonus'] == 'str':
             Atributos.adicionar_remover_ponto_atributo(Atributos, nome_personagem, FORCA_EQUIPAMENTO, ADICIONAR, Itens._itens[nome_personagem][cod]['bonus'])
@@ -175,12 +179,12 @@ class Equipamentos:
             return cls._equipados[nome_personagem][equipamento]['cod'] 
         else:
             return 0
-        
-    def carregar_arma_escudo(self, nome):
+    
+    @classmethod
+    def carregar_arma_escudo(cls, nome):
         where = f" where nome_player = '{nome}'"
         dados = ler_tabela('arma, escudo', 'EQUIPAMENTOS', where)
-
-        self.equipar_item(dados[0], ARMA, True)
-
-        if dados[1] > 0:
-            self.equipar_item(dados[1], ESCUDO, True)
+        
+        cls.equipar_item(nome, dados[0][0], ARMA, True)
+        if dados[0][1] > 0:
+            cls.equipar_item(nome, dados[0][1], ESCUDO, True)

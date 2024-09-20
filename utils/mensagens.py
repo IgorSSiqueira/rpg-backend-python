@@ -1,5 +1,5 @@
 import msvcrt
-from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA, VERIFICAR_ATRIBUTOS, POTION, HIPOTION, MANAPOTION, GUERREIRO, MAGO, FUGIR, REGEN, NOVO_JOGO, CONTINUAR
+from utils.constantes import ATACAR, USAR_ITEM, USAR_MAGIA, FOGO, CURA, RESTAURAR, PROCURAR_INIMIGO, USAR_MAGIA_ANTES_BATALHA, OLHAR_INVENTARIO, TROCAR_EQUIPAMENTO, AREA_ANTERIOR, AREA_PROXIMA, VERIFICAR_ATRIBUTOS, POTION, HIPOTION, MANAPOTION, GUERREIRO, MAGO, FUGIR, REGEN, NOVO_JOGO, CONTINUAR, SAVE_GAME
 import os
 from DB.rpg_backend_DB import veriquicar_player_existe, create_database, create_tables, ler_tabela
 
@@ -10,28 +10,36 @@ def novo_ou_carregar_jogo():
     print('1 - Novo Jogo\n'
          +'2 - Carregar jogo')
     while True:
-        opc = input('Selecione uma opção:: ')
+        try:
+            opc = int(input('Selecione uma opção:: '))
 
-        if opc == 1:
-            return NOVO_JOGO
-        elif opc == 2:
-            return CONTINUAR
-        else:
+            if opc == 1:
+                return NOVO_JOGO
+            elif opc == 2:
+                return CONTINUAR
+            else:
+                print('Opção inválida!\n')  
+        except:
             print('Opção inválida!\n')  
 
 def carregar_personagem():
     nomes_players = ler_tabela('nome', 'PLAYER')
+    
+    if not nomes_players:
+        print('Não existe jogos salvos ainda. Iniciando novo jogo!\n')
+        return NOVO_JOGO
+
     for nome in nomes_players:
         print(nome[0].capitalize())
 
     while True:
         player = input('\nDigite o nome do personagem que deseja carregar.\n:: ')
-        player = player.upper
+        player = player.upper()
         is_valid = veriquicar_player_existe(player)
         if not is_valid:
             print('Nome digitado inválido, favor digitar um nome válido:')
         else:
-            where = f"nome = '{player}'"
+            where = f"where nome = '{player}'"
             return ler_tabela('*', 'PLAYER', where)
 
 
@@ -50,7 +58,9 @@ def solicitar_nome():
         nome_jogador = input('Digite o nome do seu personagem: ').upper()
         player_existe = veriquicar_player_existe(nome_jogador)
 
-        if player_existe:
+        if nome_jogador == '':
+            print('O nome não pode ser vazio!\n')
+        elif player_existe:
             print('Este nome de jogador já existe. Por favor escolha outro!\n')
         else:
             return nome_jogador
@@ -152,6 +162,9 @@ def while_acao(texto_info, texto_input, nro_maximo, acao_inicial = False, escolh
             else:
                 print(texto_info)
                 opcao_selecionada = int(input(texto_input))   
+
+                if opcao_selecionada == 9 and not acao_inicial and not magia and not magia_cura_antes_batalha_while:
+                    break
 
                 if area_max and opcao_selecionada == 7:
                     print('Opção inválida!\n')
@@ -305,7 +318,7 @@ def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, 
 
     opc_max = 7
     mensagem_voltar_area = ''
-    mensagem_proxima_area = f'7 - Ir para próxima área e enfrentar um inimigo! (área: {area_atual+1})'
+    mensagem_proxima_area = f'\n7 - Ir para próxima área e enfrentar um inimigo! (área: {area_atual+1})'
 
     if area_atual > 1:
         opc_max = 8
@@ -320,10 +333,10 @@ def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, 
                   '3 - Usar um item\n'
                   '4 - Olhar os equipamentos no inventário\n'
                   '5 - Selecionar equipamento para trocar\n'
-                  '6 - Verificar atributos\n'
+                  '6 - Verificar atributos'
                   + mensagem_proxima_area
-                  + mensagem_voltar_area)
-                  #9 - SALVAR O JOGO
+                  + mensagem_voltar_area
+                  +'\n9 - Salvar')
 
     texto_input = '\nQual ação deseja realizar?\n::: '
 
@@ -345,6 +358,8 @@ def escolhas_acao_antes_batalha(area_atual, hp_atual, hp_max, mp_atual, mp_max, 
         return AREA_PROXIMA
     elif acao == 8:
         return AREA_ANTERIOR
+    elif acao == 9:
+        return SAVE_GAME
     
 
     # acao = while_antes_batalha(texto_info, texto_input, 3, True)
