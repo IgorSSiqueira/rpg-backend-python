@@ -1,4 +1,4 @@
-from utils.mensagens import retornar_usar_pocao, esperar_jogador
+from utils.mensagens import retornar_usar_pocao
 from utils.constantes import POTION, HIPOTION, MANAPOTION
 from DB.rpg_backend_DB import salvar_items, ler_tabela
 
@@ -21,7 +21,7 @@ class Itens:
                 8:  {'cod': 8 , 'nome': 'Cetro Médio'       , 'quantidade': 0, 'dano_min': 10, 'dano_max': 15 , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 30, 'drop_chance': 10 , 'custo_compra': 800, 'custo_venda': 240},
 
                 9:  {'cod': 9 , 'nome': 'Cetro Mágico'      , 'quantidade': 0, 'dano_min': 20, 'dano_max': 30 , 'maos': 2, 'tipo_bonus': 'int', 'bonus': 45, 'tipo_especial': 'restaura_mana', 'especial': 50 , 'desc_esp': 'Restaura 50 de mana quando mata um inimigo', 'drop_chance': 5, 'custo_compra': 3000, 'custo_venda': 1},
-                10: {'cod': 10, 'nome': 'Espada Vampírica'  , 'quantidade': 0, 'dano_min': 20, 'dano_max': 300, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 30, 'tipo_especial': 'roubo_vida'   , 'especial': 100, 'desc_esp': 'Restaura 100% do dano causado'             , 'drop_chance': 5, 'custo_compra': 5000, 'custo_venda': 1},
+                10: {'cod': 10, 'nome': 'Espada Vampírica'  , 'quantidade': 0, 'dano_min': 20, 'dano_max': 300, 'maos': 1, 'tipo_bonus': 'str', 'bonus': 30, 'tipo_especial': 'roubo_vida'   , 'especial': 100, 'desc_esp': 'Restaura 25% do dano causado'             , 'drop_chance': 5, 'custo_compra': 5000, 'custo_venda': 1},
             }
 
     @classmethod

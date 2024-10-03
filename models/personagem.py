@@ -293,8 +293,9 @@ class Personagem:
                             inimigo.HP -= dano_causado_player
 
                             if life_steal_player:
-                                print(f'Player recuperou {dano_causado_player} pontos de vida!\n')
-                                player.HP += dano_causado_player
+                                recupera = int(dano_causado_player/4)
+                                print(f'Player recuperou {recupera} pontos de vida!\n')
+                                player.HP += recupera
                                 if player.HP > player.HPmax:
                                     player.HP = player.HPmax
 
@@ -343,8 +344,9 @@ class Personagem:
                             print(f'O {inimigo.nome} te atacou de volta!\n{player.nome} perdeu {dano_causado_inimigo} pontos de vida!\n')
                             
                             if inimigo.cod_arma == 10:
-                                print(f'{inimigo.nome} recuperou {dano_causado_inimigo} ponto de vida!\n')
-                                inimigo.HP += dano_causado_inimigo
+                                recuperou = int(dano_causado_inimigo/2)
+                                print(f'{inimigo.nome} recuperou {recuperou} ponto de vida!\n')
+                                inimigo.HP += recuperou
                                 if inimigo.HP > inimigo.HPmax:
                                     inimigo.HP = inimigo.HPmax   
                             
